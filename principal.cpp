@@ -74,7 +74,6 @@ void principal::choixCoupleDevises()
     connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     choix->exec();
     qDebug() << urlChoixDevises;
-
 }
 
 void principal::intervalleTemps()

@@ -4,6 +4,7 @@
 #include <QGroupBox>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QLabel>
 #include <QDebug>
 #include "principal.h"
 
@@ -63,7 +64,12 @@ dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
     layoutBoutons->addWidget(annuler);
     layoutBoutons->addWidget(valider);
 
+    QLabel* info = new QLabel(this);
+    info->setText("Selectionner les couples de devises qui seront stockés dans la base de données.\n Ceci n'affecte pas la vue de la fenêtre principale.\n Pour modifier la vue, utilisez Options ");
+    info->show();
+
     layoutPrincipal->addWidget(groupBox);
+    layoutPrincipal->addWidget(info);
     layoutPrincipal->addLayout(layoutBoutons);
     setLayout(layoutPrincipal);
 }
