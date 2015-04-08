@@ -22,15 +22,15 @@
 principal::principal() : nombreCouplesSelectionnes(0), urlChoixDevises("1;")
 {
     // On crée la base de donnée et le modèle qui y sera attaché, et on initialise un webview
-    creerBdd();
+    creerBdd() ;
     modeleQ = new QSqlQueryModel ;
     modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure), jour FROM COTATION GROUP BY nom ORDER BY nom") ;
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
-//    connexionHttp();
-//    QTimer* timerRequete = new QTimer();
-//    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-//    timerRequete->start(10000);
+    connexionHttp();
+    QTimer* timerRequete = new QTimer();
+    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
+    timerRequete->start(10000);
 
 
     // Design de la fenêtre principale
@@ -75,7 +75,6 @@ void principal::choixCoupleDevises()
     dialogChoixDevises* choix = new dialogChoixDevises;
     connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     choix->exec();
-    qDebug() << urlChoixDevises;
 }
 
 void principal::intervalleTemps()
@@ -118,9 +117,8 @@ void principal::recupereDonnees()
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
     }
-    // et on rafraichit le QSqlQuery et le QTableView
-    modeleQ->query().exec();
-    tableView->reset();
+    // et on rafraichit le QSqlQuery
+    modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure), jour FROM COTATION GROUP BY nom ORDER BY nom") ;
 }
 
 bool principal::creerBdd()
