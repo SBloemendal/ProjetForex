@@ -65,8 +65,8 @@ dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
     layoutBoutons->addWidget(valider);
 
     QLabel* info = new QLabel(this);
-    info->setText("Selectionner les couples de devises qui seront stockés dans la base de données.\n Ceci n'affecte pas la vue de la fenêtre principale.\n Pour modifier la vue, utilisez Options ");
-    info->show();
+    info->setText("Selectionner les couples de devises qui seront stockés dans la base de données.\n Ceci n'affecte pas l'affichage de la fenêtre principale.\n Pour modifier l'affichade de la fenêtre principale, utilisez le menu Options ");
+    //info->show();
 
     layoutPrincipal->addWidget(groupBox);
     layoutPrincipal->addWidget(info);

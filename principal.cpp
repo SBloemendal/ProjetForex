@@ -1,6 +1,7 @@
 #include "principal.h"
 #include "coupledevise.h"
 #include "dialogchoixdevises.h"
+#include "dialogueoptions.h"
 #include <iostream>
 #include <QDialog>
 #include <QUrl>
@@ -26,10 +27,10 @@ principal::principal() : nombreCouplesSelectionnes(0), urlChoixDevises("1;")
     modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure), jour FROM COTATION GROUP BY nom ORDER BY nom") ;
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
-    connexionHttp();
-    QTimer* timerRequete = new QTimer();
-    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-    timerRequete->start(10000);
+//    connexionHttp();
+//    QTimer* timerRequete = new QTimer();
+//    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
+//    timerRequete->start(10000);
 
 
     // Design de la fenêtre principale
@@ -58,7 +59,8 @@ principal::principal() : nombreCouplesSelectionnes(0), urlChoixDevises("1;")
 
 void principal::options()
 {
-
+    DialogueOptions* options = new DialogueOptions ;
+    options->exec();
 
 //            serveur
 //            nom bdd
@@ -70,7 +72,7 @@ void principal::options()
 
 void principal::choixCoupleDevises()
 {
-    dialogChoixDevises* choix = new dialogChoixDevises();
+    dialogChoixDevises* choix = new dialogChoixDevises;
     connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     choix->exec();
     qDebug() << urlChoixDevises;

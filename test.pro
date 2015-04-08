@@ -16,9 +16,11 @@ TEMPLATE = app
 SOURCES += main.cpp \
     principal.cpp \
     coupledevise.cpp \
-    dialogchoixdevises.cpp
+    dialogchoixdevises.cpp \
+    dialogueoptions.cpp
 
 HEADERS += \
     principal.h \
     coupledevise.h \
-    dialogchoixdevises.h
+    dialogchoixdevises.h \
+    dialogueoptions.h
