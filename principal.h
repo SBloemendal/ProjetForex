@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QSqlDatabase>
 
+class QSettings ;
 class QWebView ;
 class QSqlQueryModel ;
 class QTableView ;
@@ -21,6 +22,7 @@ public:
 public slots:
     void recupereDonnees() ;
     void setUrlChoixDevises(QString url) { urlChoixDevises = url ; }
+    void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
 
 private slots:
     void connexionHttp() ;
@@ -34,7 +36,9 @@ private:
     QSqlQueryModel* modeleQ ;
     QTableView* tableView ;
     int nombreCouplesSelectionnes ;
+    QString urlPourModele ;
     QString urlChoixDevises ;
+    QString urlFiltreDevises ;
 };
 
 #endif // PRINCIPAL_H

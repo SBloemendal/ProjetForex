@@ -6,10 +6,14 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QDebug>
+#include <QSettings>
 #include "principal.h"
 
 dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
 {
+    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    settings.beginGroup("choixDevises");
+
     setWindowTitle("Choix des couples de devises");
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;
 
@@ -18,15 +22,15 @@ dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
 
     QVBoxLayout* layoutGauche = new QVBoxLayout ;
     cb1 = new QCheckBox("EUR/USD", this) ;
-    cb1->setChecked(true);
+    cb1->setChecked(settings.value("cb1").toBool());
     cb2 = new QCheckBox("GBP/USD", this) ;
-    cb2->setChecked(true);
+    cb2->setChecked(settings.value("cb2").toBool());
     cb3 = new QCheckBox("USD/JPY", this) ;
-    cb3->setChecked(true);
+    cb3->setChecked(settings.value("cb3").toBool());
     cb4 = new QCheckBox("USD/CHF", this) ;
-    cb4->setChecked(true);
+    cb4->setChecked(settings.value("cb4").toBool());
     cb5 = new QCheckBox("EUR/GBP", this) ;
-    cb5->setChecked(true);
+    cb5->setChecked(settings.value("cb5").toBool());
     layoutGauche->addWidget(cb1);
     layoutGauche->addWidget(cb2);
     layoutGauche->addWidget(cb3);
@@ -35,15 +39,15 @@ dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
 
     QVBoxLayout* layoutDroit = new QVBoxLayout ;
     cb6 = new QCheckBox("EUR/JPY", this) ;
-    cb6->setChecked(true);
+    cb6->setChecked(settings.value("cb6").toBool());
     cb7 = new QCheckBox("EUR/CHF", this) ;
-    cb7->setChecked(true);
+    cb7->setChecked(settings.value("cb7").toBool());
     cb8 = new QCheckBox("GPB/JPY", this) ;
-    cb8->setChecked(true);
+    cb8->setChecked(settings.value("cb8").toBool());
     cb9 = new QCheckBox("CHF/JPY", this) ;
-    cb9->setChecked(true);
+    cb9->setChecked(settings.value("cb9").toBool());
     cb10= new QCheckBox("GBP/CHF", this) ;
-    cb10->setChecked(true);
+    cb10->setChecked(settings.value("cb10").toBool());
     layoutDroit->addWidget(cb6);
     layoutDroit->addWidget(cb7);
     layoutDroit->addWidget(cb8);
@@ -66,12 +70,12 @@ dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
 
     QLabel* info = new QLabel(this);
     info->setText("Selectionner les couples de devises qui seront stockés dans la base de données.\n Ceci n'affecte pas l'affichage de la fenêtre principale.\n Pour modifier l'affichade de la fenêtre principale, utilisez le menu Options ");
-    //info->show();
 
     layoutPrincipal->addWidget(groupBox);
     layoutPrincipal->addWidget(info);
     layoutPrincipal->addLayout(layoutBoutons);
     setLayout(layoutPrincipal);
+    settings.endGroup();
 }
 
 dialogChoixDevises::~dialogChoixDevises()
@@ -81,6 +85,7 @@ dialogChoixDevises::~dialogChoixDevises()
 
 void dialogChoixDevises::construitURL()
 {
+    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
     if (cb1->isChecked())
         urlChoixCouples += "1;";
     if (cb2->isChecked())
@@ -101,7 +106,21 @@ void dialogChoixDevises::construitURL()
         urlChoixCouples += "12;";
     if (cb10->isChecked())
         urlChoixCouples += "13;";
-    qDebug() << urlChoixCouples;
+
+    settings.beginGroup("choixDevises");
+    settings.setValue("cb1", cb1->isChecked());
+    settings.setValue("cb2", cb2->isChecked());
+    settings.setValue("cb3", cb3->isChecked());
+    settings.setValue("cb4", cb4->isChecked());
+    settings.setValue("cb5", cb5->isChecked());
+    settings.setValue("cb6", cb6->isChecked());
+    settings.setValue("cb7", cb7->isChecked());
+    settings.setValue("cb8", cb8->isChecked());
+    settings.setValue("cb9", cb9->isChecked());
+    settings.setValue("cb10", cb10->isChecked());
+    settings.setValue("urlChoixCouples", urlChoixCouples);
+    settings.endGroup();
+
     emit dialogueFinis(urlChoixCouples) ;
     this->close();
 }
