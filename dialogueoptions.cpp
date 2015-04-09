@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QSettings>
+#include <QLineEdit>
 #include "principal.h"
 
 DialogueOptions::DialogueOptions()
@@ -16,6 +17,20 @@ DialogueOptions::DialogueOptions()
 
     setWindowTitle("Options");
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;
+
+    QGroupBox *groupBoxBdd = new QGroupBox("Base de données", this) ;
+    QVBoxLayout* layoutBdd = new QVBoxLayout ;
+    QLineEdit* serveur = new QLineEdit("Serveur") ;
+    QLineEdit* nomBdd = new QLineEdit("Nom de la base de donnée");
+    QLineEdit* loginBdd = new QLineEdit("Identifiant");
+    QLineEdit* passwordBdd = new QLineEdit("Mot de passe");
+    QLineEdit* urlForex = new QLineEdit("Site Forex");
+    layoutBdd->addWidget(serveur);
+    layoutBdd->addWidget(nomBdd);
+    layoutBdd->addWidget(loginBdd);
+    layoutBdd->addWidget(passwordBdd);
+    layoutBdd->addWidget(urlForex);
+    groupBoxBdd->setLayout(layoutBdd);
 
     QGroupBox *groupBoxDevises = new QGroupBox("Afficher ces couples de devises", this) ;
     QHBoxLayout* layoutgroupBoxDevises = new QHBoxLayout ;
@@ -57,7 +72,7 @@ DialogueOptions::DialogueOptions()
     layoutgroupBoxDevises->addLayout(layoutGauche);
     layoutgroupBoxDevises->addLayout(layoutDroit);
     groupBoxDevises->setLayout(layoutgroupBoxDevises);
-    groupBoxDevises->move(5,5);
+    //groupBoxDevises->move(5,5);
 
 
 
@@ -76,6 +91,7 @@ DialogueOptions::DialogueOptions()
     layoutBoutons->addWidget(annuler);
     layoutBoutons->addWidget(valider);
 
+    layoutPrincipal->addWidget(groupBoxBdd);
     layoutPrincipal->addWidget(groupBoxDevises);
     layoutPrincipal->addWidget(info);
     layoutPrincipal->addLayout(layoutBoutons);

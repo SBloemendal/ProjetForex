@@ -32,7 +32,7 @@ principal::principal() : nombreCouplesSelectionnes(0)
     qDebug() << urlFiltreDevises ;
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
-    //connexionHttp();
+    connexionHttp();
     QTimer* timerRequete = new QTimer();
     connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
     timerRequete->start(10000);
@@ -41,12 +41,12 @@ principal::principal() : nombreCouplesSelectionnes(0)
     // Design de la fenêtre principale
     setGeometry(400, 200, 800, 600);
     QMenuBar* barreDeMenu = menuBar() ;
-    QMenu* menuFichier = barreDeMenu->addMenu("Fichier") ;
-    QMenu* menuDevises = barreDeMenu->addMenu("Devises") ;
+    QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
+    QMenu* menuDevises = barreDeMenu->addMenu("Affichage") ;
     menuFichier->addAction("Options", this, SLOT(options())) ;
     menuFichier->addAction("Quitter", qApp, SLOT(quit())) ;
-    menuDevises->addAction("Choix des devises", this, SLOT(choixCoupleDevises())) ;
-    menuDevises->addAction("Intervalle de temps", this, SLOT(intervalleTemps())) ;
+    menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
+    menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
 
     QVBoxLayout* layout = new QVBoxLayout() ;
     tableView = new QTableView(this) ;
@@ -73,13 +73,6 @@ void principal::options()
     connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString)));
     options->exec();
     recupereDonnees();
-
-//            serveur
-//            nom bdd
-//            login
-//            password
-//            URL
-//            list couples telecharge
 }
 
 void principal::choixCoupleDevises()
@@ -104,9 +97,9 @@ void principal::connexionHttp()
     QString url = "http://fxrates.fr.forexprostools.com/index.php?force_lang=5&pairs_ids=" ;
     url += urlChoixDevises;
     url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
-//    webView->load(QUrl(url));
-//    connect (webView, SIGNAL(loadFinished(bool)), this, SLOT(recupereDonnees())) ;
-//    webView->close();
+    webView->load(QUrl(url));
+    connect (webView, SIGNAL(loadFinished(bool)), this, SLOT(recupereDonnees())) ;
+    webView->close();
     recupereDonnees();
 }
 
