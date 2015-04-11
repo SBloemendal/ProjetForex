@@ -4,6 +4,7 @@
 #include "principal.h"
 #include <QDialog>
 
+class QLineEdit ;
 class QCheckBox ;
 
 class DialogueOptions : public QDialog
@@ -19,9 +20,15 @@ signals:
 
 public slots:
     void construitURL();
+    void parametreParDefaut();
 
 private:
     QString urlChoixCouples ;
+    QLineEdit* serveur ;
+    QLineEdit* nomBdd ;
+    QLineEdit* loginBdd ;
+    QLineEdit* passwordBdd ;
+    QLineEdit* urlForex ;
     QCheckBox* cb1;
     QCheckBox* cb2;
     QCheckBox* cb3;

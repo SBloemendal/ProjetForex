@@ -2,6 +2,7 @@
 #include "coupledevise.h"
 #include "dialogchoixdevises.h"
 #include "dialogueoptions.h"
+#include "dialogueintervalletemps.h"
 #include <iostream>
 #include <QDialog>
 #include <QUrl>
@@ -22,14 +23,20 @@
 principal::principal() : nombreCouplesSelectionnes(0)
 {
     QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
-    urlFiltreDevises = settings.value("afficherDevises/urlchoixCouples").toString() ;
-    urlChoixDevises = settings.value("choixDevises/urlChoixCouples").toString() ;
+    //settings.clear();
+    urlFiltreDevises = settings.value("afficherDevises/urlchoixCouples", "WHERE jour=date('now')").toString() ;
+    urlChoixDevises = settings.value("choixDevises/urlChoixCouples", "1; 2; 3; 4; 6; 9; 10; 11; 12; 13;").toString() ;
+    serveur = settings.value("choixDevises/serveur", "127.0.0.1").toString();
+    nomBdd = settings.value("choixDevises/nomBdd", "bddForex.db").toString() ;
+    loginBdd = settings.value("choixDevises/loginBdd", "admin").toString() ;
+    passwordBdd = settings.value("choixDevises/passwordBdd", "admin").toString() ;
+    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.fr.forexprostools.com").toString() ;
+
 
     // On crée la base de donnée et le modèle qui y sera attaché, et on initialise un webview
     creerBdd() ;
     modeleQ = new QSqlQueryModel ;
-    modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure), jour FROM COTATION  " + urlFiltreDevises + " GROUP BY nom ORDER BY nom") ;
-    qDebug() << urlFiltreDevises ;
+    modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom") ;
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
     connexionHttp();
@@ -62,15 +69,10 @@ principal::principal() : nombreCouplesSelectionnes(0)
     layout->addWidget(tableView);
 }
 
-void afficheUnCoupleDevise()
-{
-
-}
-
 void principal::options()
 {
     DialogueOptions* options = new DialogueOptions ;
-    connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString)));
+    connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     options->exec();
     recupereDonnees();
 }
@@ -78,15 +80,15 @@ void principal::options()
 void principal::choixCoupleDevises()
 {
     dialogChoixDevises* choix = new dialogChoixDevises;
-    connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
+    connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString)));
     choix->exec();
     recupereDonnees();
-
 }
 
 void principal::intervalleTemps()
 {
-
+    DialogueIntervalleTemps* fenetreIntervalTemps = new DialogueIntervalleTemps ;
+    fenetreIntervalTemps->exec();
 }
 
 void principal::connexionHttp()
@@ -94,7 +96,7 @@ void principal::connexionHttp()
     // Initialisation du webview avec la requete http
     webView = new QWebView(this);
     webView->hide();
-    QString url = "http://fxrates.fr.forexprostools.com/index.php?force_lang=5&pairs_ids=" ;
+    QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
     url += urlChoixDevises;
     url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
     webView->load(QUrl(url));
@@ -125,14 +127,17 @@ void principal::recupereDonnees()
         couple.save(&db) ;
     }
     // et on rafraichit le QSqlQuery
-    urlPourModele = "SELECT nom, achat, vente, variation, max(heure), jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom" ;
+    urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom" ;
     modeleQ->setQuery(urlPourModele) ;
 }
 
 bool principal::creerBdd()
 {
     db = QSqlDatabase::addDatabase( "QSQLITE") ;
-    db.setDatabaseName("./bddForex.db");
+    db.setHostName(serveur);
+    db.setDatabaseName("./" + nomBdd);
+    db.setUserName(loginBdd);
+    db.setPassword(passwordBdd);
 
     if (db.open()){                                         // Test si on a pu se connecter à la BDD
         qDebug() << "Connecté à la base de donnée" ;
@@ -147,16 +152,3 @@ bool principal::creerBdd()
         return false ;
     }
 }
-
-
-//Pour ecrire la réponse dans un fichier
-//    QFile fichier("bloat.txt") ;
-//    fichier.write(repli->readAll()) ;
-//    fichier.close();
-//    fichier.open(QIODevice::ReadOnly) ;
-//    QString htm = fichier.readAll() ;
-//    fichier.close() ;
-//    htm.remove(0,1) ;
-
-
-

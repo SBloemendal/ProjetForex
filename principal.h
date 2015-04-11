@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QMainWindow>
 #include <QSqlDatabase>
+#include <QDebug>
 
 class QSettings ;
 class QWebView ;
@@ -21,7 +22,7 @@ public:
 
 public slots:
     void recupereDonnees() ;
-    void setUrlChoixDevises(QString url) { urlChoixDevises = url ; }
+    void setUrlChoixDevises(QString url) { urlChoixDevises = url ;}
     void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
 
 private slots:
@@ -39,6 +40,11 @@ private:
     QString urlPourModele ;
     QString urlChoixDevises ;
     QString urlFiltreDevises ;
+    QString serveur ;
+    QString nomBdd ;
+    QString loginBdd ;
+    QString passwordBdd ;
+    QString urlForex ;
 };
 
 #endif // PRINCIPAL_H

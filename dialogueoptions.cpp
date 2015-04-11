@@ -13,39 +13,70 @@
 DialogueOptions::DialogueOptions()
 {
     QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
-    settings.beginGroup("afficherDevises");
+    settings.beginGroup("choixDevises");
 
     setWindowTitle("Options");
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;
 
-    QGroupBox *groupBoxBdd = new QGroupBox("Base de données", this) ;
-    QVBoxLayout* layoutBdd = new QVBoxLayout ;
-    QLineEdit* serveur = new QLineEdit("Serveur") ;
-    QLineEdit* nomBdd = new QLineEdit("Nom de la base de donnée");
-    QLineEdit* loginBdd = new QLineEdit("Identifiant");
-    QLineEdit* passwordBdd = new QLineEdit("Mot de passe");
-    QLineEdit* urlForex = new QLineEdit("Site Forex");
-    layoutBdd->addWidget(serveur);
-    layoutBdd->addWidget(nomBdd);
-    layoutBdd->addWidget(loginBdd);
-    layoutBdd->addWidget(passwordBdd);
-    layoutBdd->addWidget(urlForex);
-    groupBoxBdd->setLayout(layoutBdd);
+    QGroupBox *groupBoxBdd = new QGroupBox("Paramètres de la base de données", this) ;
 
-    QGroupBox *groupBoxDevises = new QGroupBox("Afficher ces couples de devises", this) ;
-    QHBoxLayout* layoutgroupBoxDevises = new QHBoxLayout ;
+    QVBoxLayout* groupBoxBddInfoLayout = new QVBoxLayout ;
+    QHBoxLayout* groupBoxBddLayout = new QHBoxLayout ;
+
+    QVBoxLayout* layoutBddDroit = new QVBoxLayout ;
+    serveur = new QLineEdit(settings.value("serveur", "127.0.0.1").toString()) ;
+    nomBdd = new QLineEdit(settings.value("nomBdd", "bddForex.db").toString());
+    loginBdd = new QLineEdit(settings.value("loginBdd", "admin").toString());
+    passwordBdd = new QLineEdit(settings.value("passwordBdd", "admin").toString());
+    urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.fr.forexprostools.com").toString());
+    layoutBddDroit->addWidget(serveur);
+    layoutBddDroit->addWidget(nomBdd);
+    layoutBddDroit->addWidget(loginBdd);
+    layoutBddDroit->addWidget(passwordBdd);
+    layoutBddDroit->addWidget(urlForex);
+
+    QVBoxLayout* layoutBddGauche = new QVBoxLayout ;
+    QLabel* serveurLabel = new QLabel("&Serveur :");
+    serveurLabel->setBuddy(serveur);
+    QLabel* nomBddLabel = new QLabel("&Nom de la base de donnée :");
+    nomBddLabel->setBuddy(nomBdd);
+    QLabel* loginBddLabel = new QLabel("&Identifiant :");
+    loginBddLabel->setBuddy(loginBdd);
+    QLabel* passwordBddLabel = new QLabel("&Mot de passe :");
+    passwordBddLabel->setBuddy(passwordBdd);
+    QLabel* urlForexLabel = new QLabel("Site &Forex :");
+    urlForexLabel->setBuddy(urlForex);
+    layoutBddGauche->addWidget(serveurLabel);
+    layoutBddGauche->addWidget(nomBddLabel);
+    layoutBddGauche->addWidget(loginBddLabel);
+    layoutBddGauche->addWidget(passwordBddLabel);
+    layoutBddGauche->addWidget(urlForexLabel);
+
+    groupBoxBddLayout->addLayout(layoutBddGauche);
+    groupBoxBddLayout->addLayout(layoutBddDroit);
+
+    QLabel* infoBdd = new QLabel(this);
+    infoBdd->setText("Les modifications des paramètres de la base de donnée\nseront pris en compte à la prochaine execution de l'application.");
+
+    groupBoxBddInfoLayout->addLayout(groupBoxBddLayout);
+    groupBoxBddInfoLayout->addWidget(infoBdd);
+    groupBoxBdd->setLayout(groupBoxBddInfoLayout);
+
+    QGroupBox *groupBoxDevises = new QGroupBox("Données stockées", this) ;
+    QVBoxLayout* layoutgroupBoxDevises = new QVBoxLayout ;
+    QHBoxLayout* layoutDevises = new QHBoxLayout ;
 
     QVBoxLayout* layoutGauche = new QVBoxLayout ;
     cb1 = new QCheckBox("EUR/USD", this) ;
-    cb1->setChecked(settings.value("cb1").toBool());
+    cb1->setChecked(settings.value("cb1", true).toBool());
     cb2 = new QCheckBox("GBP/USD", this) ;
-    cb2->setChecked(settings.value("cb2").toBool());
+    cb2->setChecked(settings.value("cb2", true).toBool());
     cb3 = new QCheckBox("USD/JPY", this) ;
-    cb3->setChecked(settings.value("cb3").toBool());
+    cb3->setChecked(settings.value("cb3", true).toBool());
     cb4 = new QCheckBox("USD/CHF", this) ;
-    cb4->setChecked(settings.value("cb4").toBool());
+    cb4->setChecked(settings.value("cb4", true).toBool());
     cb5 = new QCheckBox("EUR/GBP", this) ;
-    cb5->setChecked(settings.value("cb5").toBool());
+    cb5->setChecked(settings.value("cb5", true).toBool());
     layoutGauche->addWidget(cb1);
     layoutGauche->addWidget(cb2);
     layoutGauche->addWidget(cb3);
@@ -54,46 +85,44 @@ DialogueOptions::DialogueOptions()
 
     QVBoxLayout* layoutDroit = new QVBoxLayout ;
     cb6 = new QCheckBox("EUR/JPY", this) ;
-    cb6->setChecked(settings.value("cb6").toBool());
+    cb6->setChecked(settings.value("cb6", true).toBool());
     cb7 = new QCheckBox("EUR/CHF", this) ;
-    cb7->setChecked(settings.value("cb7").toBool());
+    cb7->setChecked(settings.value("cb7", true).toBool());
     cb8 = new QCheckBox("GBP/JPY", this) ;
-    cb8->setChecked(settings.value("cb8").toBool());
+    cb8->setChecked(settings.value("cb8", true).toBool());
     cb9 = new QCheckBox("CHF/JPY", this) ;
-    cb9->setChecked(settings.value("cb9").toBool());
+    cb9->setChecked(settings.value("cb9", true).toBool());
     cb10= new QCheckBox("GBP/CHF", this) ;
-    cb10->setChecked(settings.value("cb10").toBool());
+    cb10->setChecked(settings.value("cb10", true).toBool());
     layoutDroit->addWidget(cb6);
     layoutDroit->addWidget(cb7);
     layoutDroit->addWidget(cb8);
     layoutDroit->addWidget(cb9);
     layoutDroit->addWidget(cb10);
 
-    layoutgroupBoxDevises->addLayout(layoutGauche);
-    layoutgroupBoxDevises->addLayout(layoutDroit);
+    QLabel* infoSelectionDevise = new QLabel(this);
+    infoSelectionDevise->setText("Selectionner les couples de devises qui seront stockés dans la base de données.\nCeci n'affecte pas l'affichage de la fenêtre principale.\nPour modifier l'affichade de la fenêtre principale, utilisez le menu 'Affichage'");
+
+    layoutDevises->addLayout(layoutGauche);
+    layoutDevises->addLayout(layoutDroit);
+    layoutgroupBoxDevises->addLayout(layoutDevises);
+    layoutgroupBoxDevises->addWidget(infoSelectionDevise);
     groupBoxDevises->setLayout(layoutgroupBoxDevises);
-    //groupBoxDevises->move(5,5);
-
-
-
-
-
-
-    QLabel* info = new QLabel(this);
-    info->setText("Options");
 
     QHBoxLayout* layoutBoutons = new QHBoxLayout;
     QPushButton* annuler = new QPushButton(tr("&Annuler"));
     connect(annuler, SIGNAL(clicked()), this, SLOT(close()));
     annuler->setDefault(true);
+    QPushButton* defaut = new QPushButton(tr("Par &défaut"));
+    connect(defaut, SIGNAL(clicked()), this, SLOT(parametreParDefaut()));
     QPushButton* valider = new QPushButton(tr("&Valider"));
     connect(valider, SIGNAL(clicked()), this, SLOT(construitURL()));
     layoutBoutons->addWidget(annuler);
+    layoutBoutons->addWidget(defaut);
     layoutBoutons->addWidget(valider);
 
     layoutPrincipal->addWidget(groupBoxBdd);
     layoutPrincipal->addWidget(groupBoxDevises);
-    layoutPrincipal->addWidget(info);
     layoutPrincipal->addLayout(layoutBoutons);
     setLayout(layoutPrincipal);
     settings.endGroup();
@@ -104,38 +133,39 @@ DialogueOptions::~DialogueOptions()
 
 }
 
+void DialogueOptions::parametreParDefaut()
+{
+    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    settings.clear();
+    this->close();
+}
+
 void DialogueOptions::construitURL()
 {
     QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
 
     if (cb1->isChecked())
-        urlChoixCouples += "'EUR/USD',";
+        urlChoixCouples += "1;";
     if (cb2->isChecked())
-        urlChoixCouples += "'GBP/USD',";
+        urlChoixCouples += "2;";
     if (cb3->isChecked())
-        urlChoixCouples += "'USD/JPY',";
+        urlChoixCouples += "3;";
     if (cb4->isChecked())
-        urlChoixCouples += "'USD/CHF',";
+        urlChoixCouples += "4;";
     if (cb5->isChecked())
-        urlChoixCouples += "'EUR/GBP',";
+        urlChoixCouples += "6;";
     if (cb6->isChecked())
-        urlChoixCouples += "'EUR/JPY',";
+        urlChoixCouples += "9;";
     if (cb7->isChecked())
-        urlChoixCouples += "'EUR/CHF',";
+        urlChoixCouples += "10;";
     if (cb8->isChecked())
-        urlChoixCouples += "'GBP/JPY',";
+        urlChoixCouples += "11;";
     if (cb9->isChecked())
-        urlChoixCouples += "'CHF/JPY',";
+        urlChoixCouples += "12;";
     if (cb10->isChecked())
-        urlChoixCouples += "'GBP/CHF',";
+        urlChoixCouples += "13;";
 
-    if (urlChoixCouples != "")
-    {
-        urlChoixCouples.chop(1);
-        urlChoixCouples = "WHERE nom IN (" + urlChoixCouples + ")" ;
-    }
-
-    settings.beginGroup("afficherDevises");
+    settings.beginGroup("choixDevises");
     settings.setValue("cb1", cb1->isChecked());
     settings.setValue("cb2", cb2->isChecked());
     settings.setValue("cb3", cb3->isChecked());
@@ -146,7 +176,12 @@ void DialogueOptions::construitURL()
     settings.setValue("cb8", cb8->isChecked());
     settings.setValue("cb9", cb9->isChecked());
     settings.setValue("cb10", cb10->isChecked());
-    settings.setValue("urlchoixCouples", urlChoixCouples);
+    settings.setValue("urlChoixCouples", urlChoixCouples);
+    settings.setValue("serveur", serveur->text());
+    settings.setValue("nomBdd", nomBdd->text());
+    settings.setValue("loginBdd", loginBdd->text());
+    settings.setValue("passwordBdd", passwordBdd->text());
+    settings.setValue("urlForex", urlForex->text());
     settings.endGroup();
 
     emit dialogueFinis(urlChoixCouples) ;

@@ -34,10 +34,6 @@ bool CoupleDevise::save(QSqlDatabase* db)
                 query.bindValue(":nom", QVariant(this->coupleDevise));
                 query.bindValue(":achat", QVariant(this->valeurAchat));
                 query.bindValue(":vente", QVariant(this->valeurVente));
-//                query.bindValue(":cours", QVariant(this->valeurCours));
-//                query.bindValue(":ouverture", QVariant(this->valeurOuverture));
-//                query.bindValue(":haut", QVariant(this->plusHaut));
-//                query.bindValue(":bas", QVariant(this->plusBas));
                 query.bindValue(":variation", QVariant(this->variation));
                 query.bindValue(":heure", QVariant(this->heure));
                 query.exec() ;
