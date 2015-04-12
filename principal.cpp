@@ -46,7 +46,7 @@ principal::principal() : nombreCouplesSelectionnes(0)
 
 
     // Design de la fenêtre principale
-    setGeometry(400, 200, 800, 600);
+    setGeometry(400, 200, 630, 580);
     QMenuBar* barreDeMenu = menuBar() ;
     QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
     QMenu* menuDevises = barreDeMenu->addMenu("Affichage") ;
@@ -55,18 +55,16 @@ principal::principal() : nombreCouplesSelectionnes(0)
     menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
     menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
 
-    QVBoxLayout* layout = new QVBoxLayout() ;
-    tableView = new QTableView(this) ;
+    tableView = new QTableView(this);
     tableView->setModel(modeleQ);
-    tableView->setGeometry(40,50,720,500);
-    tableView->verticalHeader()->hide();
+    tableView->setGeometry(40,50,550,500);
     tableView->setAlternatingRowColors(true);
+    tableView->verticalHeader()->hide();
     tableView->setShowGrid(false);
     tableView->verticalHeader()->setDefaultSectionSize(20);
     tableView->horizontalHeader()->setDefaultSectionSize(90);
     tableView->horizontalHeader()->setStretchLastSection(true);
-
-    layout->addWidget(tableView);
+    tableView->setSortingEnabled(true);
 }
 
 void principal::options()
@@ -134,10 +132,10 @@ void principal::recupereDonnees()
 bool principal::creerBdd()
 {
     db = QSqlDatabase::addDatabase( "QSQLITE") ;
-    db.setHostName(serveur);
+    //db.setHostName(serveur);
     db.setDatabaseName("./" + nomBdd);
-    db.setUserName(loginBdd);
-    db.setPassword(passwordBdd);
+    //db.setUserName(loginBdd);
+    //db.setPassword(passwordBdd);
 
     if (db.open()){                                         // Test si on a pu se connecter à la BDD
         qDebug() << "Connecté à la base de donnée" ;

@@ -7,6 +7,8 @@
 class QSqlTableModel ;
 class QTableView ;
 class QComboBox ;
+class QLineEdit ;
+class QDateEdit ;
 
 class DialogueIntervalleTemps : public QDialog
 {
@@ -23,6 +25,8 @@ private:
     QSqlTableModel* modeleIT ;
     QTableView * tableView ;
     QComboBox* selection ;
+    QDateEdit* dateDebut ;
+    QDateEdit* dateFin ;
 };
 
 #endif // DIALOGUEINTERVALLETEMPS_H

@@ -1,6 +1,7 @@
 #ifndef PRINCIPAL_H
 #define PRINCIPAL_H
 
+#include <QtWidgets>
 #include <QWidget>
 #include <QMainWindow>
 #include <QSqlDatabase>
@@ -48,5 +49,4 @@ private:
 };
 
 #endif // PRINCIPAL_H
-
 

@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QLineEdit>
+#include <QFormLayout>
 #include "principal.h"
 
 DialogueOptions::DialogueOptions()
@@ -19,48 +20,24 @@ DialogueOptions::DialogueOptions()
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;
 
     QGroupBox *groupBoxBdd = new QGroupBox("Paramètres de la base de données", this) ;
+    QFormLayout* groupBoxBddLayout = new QFormLayout();
 
-    QVBoxLayout* groupBoxBddInfoLayout = new QVBoxLayout ;
-    QHBoxLayout* groupBoxBddLayout = new QHBoxLayout ;
-
-    QVBoxLayout* layoutBddDroit = new QVBoxLayout ;
     serveur = new QLineEdit(settings.value("serveur", "127.0.0.1").toString()) ;
     nomBdd = new QLineEdit(settings.value("nomBdd", "bddForex.db").toString());
     loginBdd = new QLineEdit(settings.value("loginBdd", "admin").toString());
     passwordBdd = new QLineEdit(settings.value("passwordBdd", "admin").toString());
     urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.fr.forexprostools.com").toString());
-    layoutBddDroit->addWidget(serveur);
-    layoutBddDroit->addWidget(nomBdd);
-    layoutBddDroit->addWidget(loginBdd);
-    layoutBddDroit->addWidget(passwordBdd);
-    layoutBddDroit->addWidget(urlForex);
-
-    QVBoxLayout* layoutBddGauche = new QVBoxLayout ;
-    QLabel* serveurLabel = new QLabel("&Serveur :");
-    serveurLabel->setBuddy(serveur);
-    QLabel* nomBddLabel = new QLabel("&Nom de la base de donnée :");
-    nomBddLabel->setBuddy(nomBdd);
-    QLabel* loginBddLabel = new QLabel("&Identifiant :");
-    loginBddLabel->setBuddy(loginBdd);
-    QLabel* passwordBddLabel = new QLabel("&Mot de passe :");
-    passwordBddLabel->setBuddy(passwordBdd);
-    QLabel* urlForexLabel = new QLabel("Site &Forex :");
-    urlForexLabel->setBuddy(urlForex);
-    layoutBddGauche->addWidget(serveurLabel);
-    layoutBddGauche->addWidget(nomBddLabel);
-    layoutBddGauche->addWidget(loginBddLabel);
-    layoutBddGauche->addWidget(passwordBddLabel);
-    layoutBddGauche->addWidget(urlForexLabel);
-
-    groupBoxBddLayout->addLayout(layoutBddGauche);
-    groupBoxBddLayout->addLayout(layoutBddDroit);
-
     QLabel* infoBdd = new QLabel(this);
     infoBdd->setText("Les modifications des paramètres de la base de donnée\nseront pris en compte à la prochaine execution de l'application.");
 
-    groupBoxBddInfoLayout->addLayout(groupBoxBddLayout);
-    groupBoxBddInfoLayout->addWidget(infoBdd);
-    groupBoxBdd->setLayout(groupBoxBddInfoLayout);
+    groupBoxBddLayout->addRow("&Serveur :", serveur) ;
+    groupBoxBddLayout->addRow("&Nom de la base de donnée :", nomBdd) ;
+    groupBoxBddLayout->addRow("&Identifiant :", loginBdd) ;
+    groupBoxBddLayout->addRow("&Mot de passe :", passwordBdd) ;
+    groupBoxBddLayout->addRow("Site &Forex :", urlForex) ;
+    groupBoxBddLayout->addRow(infoBdd);
+    groupBoxBdd->setLayout(groupBoxBddLayout);
+
 
     QGroupBox *groupBoxDevises = new QGroupBox("Données stockées", this) ;
     QVBoxLayout* layoutgroupBoxDevises = new QVBoxLayout ;
