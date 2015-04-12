@@ -4,7 +4,7 @@
 #include "principal.h"
 #include <QDialog>
 
-class QSqlTableModel ;
+class QSqlQueryModel ;
 class QTableView ;
 class QComboBox ;
 class QLineEdit ;
@@ -22,7 +22,7 @@ private slots:
     void selectionChange();
 
 private:
-    QSqlTableModel* modeleIT ;
+    QSqlQueryModel* modeleIT ;
     QTableView * tableView ;
     QComboBox* selection ;
     QDateEdit* dateDebut ;

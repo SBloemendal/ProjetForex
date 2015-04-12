@@ -40,8 +40,7 @@ DialogueIntervalleTemps::DialogueIntervalleTemps()
     connect(valider, SIGNAL(clicked()), this, SLOT(selectionChange()));
     QLabel* info = new QLabel("Sélectionner le couple de devises\n et les dates de début et de fin\n de la période souhaitée.");
 
-    modeleIT = new QSqlTableModel ;
-    modeleIT->setTable("COTATION");
+    modeleIT = new QSqlQueryModel ;
     selectionChange();
 
     tableView = new QTableView ;
@@ -55,7 +54,6 @@ DialogueIntervalleTemps::DialogueIntervalleTemps()
     tableView->verticalHeader()->setDefaultSectionSize(20);
     tableView->horizontalHeader()->setDefaultSectionSize(90);
     tableView->horizontalHeader()->setStretchLastSection(true);
-    tableView->setSortingEnabled(true);
 
     layout->addWidget(selectionLabel,0,0,1,2);
     layout->addWidget(selection,0,2,1,1);
@@ -77,7 +75,5 @@ DialogueIntervalleTemps::~DialogueIntervalleTemps()
 
 void DialogueIntervalleTemps::selectionChange()
 {
-    modeleIT->setFilter("nom='" + selection->currentText() + "' AND jour BETWEEN '" + dateDebut->date().toString("yyyy-MM-dd") + "' AND '" + dateFin->date().toString("yyyy-MM-dd") + "'");
-    modeleIT->setSort(5,Qt::AscendingOrder);
-    modeleIT->select();
+    modeleIT->setQuery("SELECT * FROM COTATION WHERE nom='" + selection->currentText() + "' AND jour BETWEEN '" + dateDebut->date().toString("yyyy-MM-dd") + "' AND '" + dateFin->date().toString("yyyy-MM-dd") + "' ORDER BY jour DESC, heure DESC");
 }
