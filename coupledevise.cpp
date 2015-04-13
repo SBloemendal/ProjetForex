@@ -30,12 +30,12 @@ bool CoupleDevise::save(QSqlDatabase* db)
         } else {
             if (db->tables().contains("COTATION"))
             {
-                query.prepare("insert into COTATION (nom, achat, vente, variation, heure, jour) values (:nom, :achat, :vente, :variation, :heure, date('now'))");
+                query.prepare("insert into COTATION (nom, achat, vente, variation, heure, jour) values (:nom, :achat, :vente, :variation, time('now','localtime'), date('now'))");
                 query.bindValue(":nom", QVariant(this->coupleDevise));
                 query.bindValue(":achat", QVariant(this->valeurAchat));
                 query.bindValue(":vente", QVariant(this->valeurVente));
                 query.bindValue(":variation", QVariant(this->variation));
-                query.bindValue(":heure", QVariant(this->heure));
+                //query.bindValue(":heure", QVariant(this->heure));
                 query.exec() ;
                 query.clear();
                 return true ;

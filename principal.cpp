@@ -3,6 +3,7 @@
 #include "dialogchoixdevises.h"
 #include "dialogueoptions.h"
 #include "dialogueintervalletemps.h"
+#include "dialoguesimulationtransactions.h"
 #include <iostream>
 #include <QDialog>
 #include <QUrl>
@@ -60,7 +61,10 @@ principal::principal() : nombreCouplesSelectionnes(0)
 
 
     // Design de la fenêtre principale
-    setGeometry(400, 200, 630, 580);
+    QWidget *zoneCentrale = new QWidget;
+
+    setGeometry(400, 200, 1400, 580);
+
     QMenuBar* barreDeMenu = menuBar() ;
     QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
     QMenu* menuDevises = barreDeMenu->addMenu("Affichage") ;
@@ -69,9 +73,10 @@ principal::principal() : nombreCouplesSelectionnes(0)
     menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
     menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
 
+    QHBoxLayout* layout = new QHBoxLayout;
+
     tableView = new QTableView(this);
     tableView->setModel(modeleQ);
-    tableView->setGeometry(40,50,550,500);
     tableView->setAlternatingRowColors(true);
     tableView->verticalHeader()->hide();
     tableView->setShowGrid(false);
@@ -79,10 +84,25 @@ principal::principal() : nombreCouplesSelectionnes(0)
     tableView->horizontalHeader()->setDefaultSectionSize(90);
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->setSortingEnabled(true);
+
+    QGraphicsScene* scene = new QGraphicsScene;
+    scene->addPixmap(QPixmap("grapheVierge.gif")) ;
+    scene->addLine(QLineF(50, 400, 100, 390)) ;
+    scene->addLine(QLineF(50, 300, 100, 380)) ;
+    scene->addLine(QLineF(50, 200, 100, 320)) ;
+    QGraphicsView* graphicsView = new QGraphicsView(scene, this);
+
+    layout->addWidget(tableView);
+    layout->addWidget(graphicsView);
+    zoneCentrale->setLayout(layout);
+
+    setCentralWidget(zoneCentrale);
 }
 
 void principal::options()
 {
+    DialogueSimulationTransactions* sim = new DialogueSimulationTransactions;
+    sim->exec();
     DialogueOptions* options = new DialogueOptions ;
     connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     options->exec();
@@ -242,7 +262,7 @@ bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
         }
     }
 
-        xmlWriter.writeEndElement();
+    xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
 
     return true;

@@ -18,11 +18,13 @@ SOURCES += main.cpp \
     coupledevise.cpp \
     dialogchoixdevises.cpp \
     dialogueoptions.cpp \
-    dialogueintervalletemps.cpp
+    dialogueintervalletemps.cpp \
+    dialoguesimulationtransactions.cpp
 
 HEADERS += \
     principal.h \
     coupledevise.h \
     dialogchoixdevises.h \
     dialogueoptions.h \
-    dialogueintervalletemps.h
+    dialogueintervalletemps.h \
+    dialoguesimulationtransactions.h

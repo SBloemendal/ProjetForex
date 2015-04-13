@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QGraphicsScene>
 #include "principal.h"
 
 int main(int argc, char *argv[])
