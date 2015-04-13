@@ -13,7 +13,9 @@
 
 DialogueOptions::DialogueOptions()
 {
-    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
+    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
     settings.beginGroup("choixDevises");
 
     setWindowTitle("Options");
@@ -26,7 +28,7 @@ DialogueOptions::DialogueOptions()
     nomBdd = new QLineEdit(settings.value("nomBdd", "bddForex.db").toString());
     loginBdd = new QLineEdit(settings.value("loginBdd", "admin").toString());
     passwordBdd = new QLineEdit(settings.value("passwordBdd", "admin").toString());
-    urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.fr.forexprostools.com").toString());
+    urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.fr.forexprostools.com").toString()); //http://fxrates.investing.com
     QLabel* infoBdd = new QLabel(this);
     infoBdd->setText("Les modifications des paramètres de la base de donnée\nseront pris en compte à la prochaine execution de l'application.");
 
@@ -112,14 +114,18 @@ DialogueOptions::~DialogueOptions()
 
 void DialogueOptions::parametreParDefaut()
 {
-    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
+    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
     settings.clear();
     this->close();
 }
 
 void DialogueOptions::construitURL()
 {
-    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
+    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
 
     if (cb1->isChecked())
         urlChoixCouples += "1;";

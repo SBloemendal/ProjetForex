@@ -11,7 +11,9 @@
 
 dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
 {
-    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
+    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
     settings.beginGroup("afficherDevises");
 
     setWindowTitle("Afficher ces couples de devises");
@@ -85,7 +87,10 @@ dialogChoixDevises::~dialogChoixDevises()
 
 void dialogChoixDevises::construitURL()
 {
-    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
+    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+
 
     if (cb1->isChecked())
         urlChoixCouples += "'EUR/USD',";

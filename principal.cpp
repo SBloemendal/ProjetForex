@@ -20,17 +20,31 @@
 #include <QWebView>
 #include <QWebFrame>
 
+
+/**
+ * \file principal.cpp
+ * \author Simon
+ * \version 1.6
+ * \date 2015-04-13
+ * \brief Classe principale qui affiche la fenetre principale dans laquelle est affichee la liste des valeurs en temps reel.
+ * \todo ameliorer la boucle de recuperation des donnes html, utiliser un tableau[i]
+ */
+
 principal::principal() : nombreCouplesSelectionnes(0)
 {
-    QSettings settings (QSettings::IniFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB") ;
+    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
+    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+
     //settings.clear();
+
     urlFiltreDevises = settings.value("afficherDevises/urlchoixCouples", "WHERE jour=date('now')").toString() ;
     urlChoixDevises = settings.value("choixDevises/urlChoixCouples", "1; 2; 3; 4; 6; 9; 10; 11; 12; 13;").toString() ;
     serveur = settings.value("choixDevises/serveur", "127.0.0.1").toString();
     nomBdd = settings.value("choixDevises/nomBdd", "bddForex.db").toString() ;
     loginBdd = settings.value("choixDevises/loginBdd", "admin").toString() ;
     passwordBdd = settings.value("choixDevises/passwordBdd", "admin").toString() ;
-    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.fr.forexprostools.com").toString() ;
+    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.fr.forexprostools.com").toString() ; //http://fxrates.investing.com
 
 
     // On crée la base de donnée et le modèle qui y sera attaché, et on initialise un webview
@@ -149,4 +163,87 @@ bool principal::creerBdd()
         qDebug() << "Pas de connexion à la base de donnée" ;
         return false ;
     }
+}
+
+
+
+bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map )
+{
+    QXmlStreamReader xmlReader( &device );
+
+    QString currentElementName;
+    while( !xmlReader.atEnd() )
+    {
+        xmlReader.readNext();
+        while( xmlReader.isStartElement() )
+        {
+            if( xmlReader.name() == "SettingsMap" )
+            {
+                                xmlReader.readNext();
+                continue;
+            }
+
+            if( !currentElementName.isEmpty() )
+            {
+                currentElementName += "/";
+            }
+            currentElementName += xmlReader.name().toString();
+            xmlReader.readNext();
+        }
+
+        if( xmlReader.isEndElement() )
+        {
+            continue;
+        }
+
+        if( xmlReader.isCharacters() && !xmlReader.isWhitespace() )
+        {
+            QString key = currentElementName;
+            QString value = xmlReader.text().toString();
+
+            map[ key ] = value;
+
+            currentElementName.clear();
+        }
+    }
+
+     if( xmlReader.hasError() )
+     {
+        return false;
+     }
+
+    return true;
+}
+
+bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
+{
+    QXmlStreamWriter xmlWriter( &device );
+    xmlWriter.setAutoFormatting( true );
+
+    xmlWriter.writeStartDocument();
+        xmlWriter.writeStartElement( "SettingsMap" );
+
+    QSettings::SettingsMap::const_iterator mi = map.begin();
+    for( mi; mi != map.end(); ++mi )
+    {
+        QString string (mi.key().toStdString().c_str());
+        QStringList groups = string.split("/");
+
+        foreach( QString groupName, groups )
+        {
+            xmlWriter.writeStartElement( groupName );
+        }
+
+        xmlWriter.writeCharacters( mi.value().toString() );
+
+        foreach( QString groupName, groups )
+        {
+            xmlWriter.writeEndElement();
+        }
+    }
+
+        xmlWriter.writeEndElement();
+    xmlWriter.writeEndDocument();
+
+    return true;
 }

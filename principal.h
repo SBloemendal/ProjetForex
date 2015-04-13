@@ -12,6 +12,10 @@ class QWebView ;
 class QSqlQueryModel ;
 class QTableView ;
 
+/** \brief fichier h de la classe principal
+ * \author Simon
+ */
+
 class principal : public QMainWindow
 {
     Q_OBJECT
@@ -48,5 +52,7 @@ private:
     QString urlForex ;
 };
 
+bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map );
+bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map );
 #endif // PRINCIPAL_H
 
