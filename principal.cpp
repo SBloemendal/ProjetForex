@@ -55,9 +55,9 @@ principal::principal() : nombreCouplesSelectionnes(0)
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
     connexionHttp();
-    QTimer* timerRequete = new QTimer();
-    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-    timerRequete->start(10000);
+//    QTimer* timerRequete = new QTimer();
+//    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
+//    timerRequete->start(10000);
 
 
     // Design de la fenêtre principale
@@ -72,6 +72,7 @@ principal::principal() : nombreCouplesSelectionnes(0)
     menuFichier->addAction("Quitter", qApp, SLOT(quit())) ;
     menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
     menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
+    menuDevises->addAction("Simulation de transactions", this, SLOT(simulationTransaction())) ;
 
     QHBoxLayout* layout = new QHBoxLayout;
 
@@ -101,8 +102,6 @@ principal::principal() : nombreCouplesSelectionnes(0)
 
 void principal::options()
 {
-    DialogueSimulationTransactions* sim = new DialogueSimulationTransactions;
-    sim->exec();
     DialogueOptions* options = new DialogueOptions ;
     connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     options->exec();
@@ -115,6 +114,12 @@ void principal::choixCoupleDevises()
     connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString)));
     choix->exec();
     recupereDonnees();
+}
+
+void principal::simulationTransaction()
+{
+    DialogueSimulationTransactions* simulation = new DialogueSimulationTransactions;
+    simulation->exec();
 }
 
 void principal::intervalleTemps()

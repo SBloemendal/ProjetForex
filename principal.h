@@ -34,6 +34,7 @@ private slots:
     void connexionHttp() ;
     void choixCoupleDevises() ;
     void intervalleTemps() ;
+    void simulationTransaction() ;
     void options() ;
 
 private:

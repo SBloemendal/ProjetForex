@@ -1,11 +1,13 @@
 #include "dialoguesimulationtransactions.h"
 
+#include <QDebug>
 #include <QComboBox>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSqlQueryModel>
+#include <QSqlRecord>
 
 DialogueSimulationTransactions::DialogueSimulationTransactions()
 {
@@ -21,6 +23,7 @@ DialogueSimulationTransactions::DialogueSimulationTransactions()
 
     valeur = new QLineEdit();
     QPushButton* valide = new QPushButton("Calculer");
+    connect (valide, SIGNAL(clicked()), this, SLOT(selectionChange()));
     achat = new QLabel();
     vente = new QLabel();
 
@@ -40,10 +43,18 @@ DialogueSimulationTransactions::~DialogueSimulationTransactions()
 
 }
 
-void DialogueSimulationTransactions::selectionChange()
+void DialogueSimulationTransactions::selectionChange()  // Remplacer la , par un . quelque soit son emplacement
 {
     QSqlQueryModel* modeleCalcul = new QSqlQueryModel;
-    modeleCalcul->setQuery("SELECT achat, vente FROM COTATION WHERE nom ='" + selection->currentText() + "'") ;
-    achat->text() = valeur * modeleCalcul->record(1).value("achat") ;
-    vente->text() = valeur * modeleCalcul->record(1).value("vente") ;
+    qDebug() << selection->currentText() ;
+    modeleCalcul->setQuery("SELECT achat, vente FROM COTATION WHERE nom='" + selection->currentText() + "'") ;
+
+    QString temp = modeleCalcul->data(modeleCalcul->index(1,0)).toString() ;
+    qDebug() << modeleCalcul->data(modeleCalcul->index(1,0)).toString() ;
+    temp.replace(1,1,'.');
+    achat->setNum(valeur->text().toDouble() * temp.toDouble()) ;
+
+    temp = modeleCalcul->data(modeleCalcul->index(1,1)).toString() ;
+    temp.replace(1,1,'.');
+    vente->setNum(valeur->text().toDouble() * temp.toDouble()) ;
 }
