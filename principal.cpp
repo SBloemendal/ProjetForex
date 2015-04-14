@@ -240,30 +240,38 @@ bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map )
     return true;
 }
 
+
 bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
 {
     QXmlStreamWriter xmlWriter( &device );
     xmlWriter.setAutoFormatting( true );
 
     xmlWriter.writeStartDocument();
-        xmlWriter.writeStartElement( "SettingsMap" );
+    xmlWriter.writeStartElement( "SettingsMap" );
+
 
     QSettings::SettingsMap::const_iterator mi = map.begin();
     for( mi; mi != map.end(); ++mi )
     {
+        QString checkSiExiste ;
         QString string (mi.key().toStdString().c_str());
         QStringList groups = string.split("/");
+         if (groups.at(0) == checkSiExiste)
+             n ;
+         else
+             checkSiExiste = groups.at(0) ;
 
         foreach( QString groupName, groups )
         {
-            xmlWriter.writeStartElement( groupName );
+            if (groupName == checkSiExiste)
+                xmlWriter.writeStartElement( groupName );
         }
-
         xmlWriter.writeCharacters( mi.value().toString() );
 
         foreach( QString groupName, groups )
         {
-            xmlWriter.writeEndElement();
+            if (groupName == checkSiExiste)
+                xmlWriter.writeStartElement( groupName );
         }
     }
 
@@ -272,3 +280,36 @@ bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
 
     return true;
 }
+
+//bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
+//{
+//    QXmlStreamWriter xmlWriter( &device );
+//    xmlWriter.setAutoFormatting( true );
+
+//    xmlWriter.writeStartDocument();
+//        xmlWriter.writeStartElement( "SettingsMap" );
+
+//    QSettings::SettingsMap::const_iterator mi = map.begin();
+//    for( mi; mi != map.end(); ++mi )
+//    {
+//        QString string (mi.key().toStdString().c_str());
+//        QStringList groups = string.split("/");
+
+//        foreach( QString groupName, groups )
+//        {
+//            xmlWriter.writeStartElement( groupName );
+//        }
+
+//        xmlWriter.writeCharacters( mi.value().toString() );
+
+//        foreach( QString groupName, groups )
+//        {
+//            xmlWriter.writeEndElement();
+//        }
+//    }
+
+//    xmlWriter.writeEndElement();
+//    xmlWriter.writeEndDocument();
+
+//    return true;
+//}
