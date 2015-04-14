@@ -28,7 +28,7 @@ DialogueOptions::DialogueOptions()
     nomBdd = new QLineEdit(settings.value("nomBdd", "bddForex.db").toString());
     loginBdd = new QLineEdit(settings.value("loginBdd", "admin").toString());
     passwordBdd = new QLineEdit(settings.value("passwordBdd", "admin").toString());
-    urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.fr.forexprostools.com").toString()); //http://fxrates.investing.com
+    urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.investing.com").toString()); //http://fxrates.fr.forexprostools.com
     QLabel* infoBdd = new QLabel(this);
     infoBdd->setText("Les modifications des paramètres de la base de donnée\nseront pris en compte à la prochaine execution de l'application.");
 

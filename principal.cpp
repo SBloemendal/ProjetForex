@@ -37,6 +37,7 @@ principal::principal() : nombreCouplesSelectionnes(0)
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
 
+
     //settings.clear();
 
     urlFiltreDevises = settings.value("afficherDevises/urlchoixCouples", "WHERE jour=date('now')").toString() ;
@@ -45,19 +46,19 @@ principal::principal() : nombreCouplesSelectionnes(0)
     nomBdd = settings.value("choixDevises/nomBdd", "bddForex.db").toString() ;
     loginBdd = settings.value("choixDevises/loginBdd", "admin").toString() ;
     passwordBdd = settings.value("choixDevises/passwordBdd", "admin").toString() ;
-    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.fr.forexprostools.com").toString() ; //http://fxrates.investing.com
+    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.investing.com").toString() ; //http://fxrates.fr.forexprostools.com
 
-
-    // On crée la base de donnée et le modèle qui y sera attaché, et on initialise un webview
+    // On crée la base de donnée et le modèle qui y sera attaché, le modèle graphique, et on initialise un webview
     creerBdd() ;
     modeleQ = new QSqlQueryModel ;
     modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom") ;
+    scene = new QGraphicsScene;
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
     connexionHttp();
-//    QTimer* timerRequete = new QTimer();
-//    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-//    timerRequete->start(10000);
+    QTimer* timerRequete = new QTimer();
+    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
+    timerRequete->start(10000);
 
 
     // Design de la fenêtre principale
@@ -86,12 +87,9 @@ principal::principal() : nombreCouplesSelectionnes(0)
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->setSortingEnabled(true);
 
-    QGraphicsScene* scene = new QGraphicsScene;
+
     scene->addPixmap(QPixmap("grapheVierge.gif")) ;
-    scene->addLine(QLineF(50, 400, 100, 390)) ;
-    scene->addLine(QLineF(50, 300, 100, 380)) ;
-    scene->addLine(QLineF(50, 200, 100, 320)) ;
-    QGraphicsView* graphicsView = new QGraphicsView(scene, this);
+    graphicsView = new QGraphicsView(scene, this);
 
     layout->addWidget(tableView);
     layout->addWidget(graphicsView);
@@ -162,6 +160,8 @@ void principal::recupereDonnees()
 
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
+        couple.dessineCourbe(scene);
+
     }
     // et on rafraichit le QSqlQuery
     urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom" ;
@@ -240,38 +240,30 @@ bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map )
     return true;
 }
 
-
 bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
 {
     QXmlStreamWriter xmlWriter( &device );
     xmlWriter.setAutoFormatting( true );
 
     xmlWriter.writeStartDocument();
-    xmlWriter.writeStartElement( "SettingsMap" );
-
+        xmlWriter.writeStartElement( "SettingsMap" );
 
     QSettings::SettingsMap::const_iterator mi = map.begin();
     for( mi; mi != map.end(); ++mi )
     {
-        QString checkSiExiste ;
         QString string (mi.key().toStdString().c_str());
         QStringList groups = string.split("/");
-         if (groups.at(0) == checkSiExiste)
-             n ;
-         else
-             checkSiExiste = groups.at(0) ;
 
         foreach( QString groupName, groups )
         {
-            if (groupName == checkSiExiste)
-                xmlWriter.writeStartElement( groupName );
+            xmlWriter.writeStartElement( groupName );
         }
+
         xmlWriter.writeCharacters( mi.value().toString() );
 
         foreach( QString groupName, groups )
         {
-            if (groupName == checkSiExiste)
-                xmlWriter.writeStartElement( groupName );
+            xmlWriter.writeEndElement();
         }
     }
 
@@ -287,29 +279,41 @@ bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
 //    xmlWriter.setAutoFormatting( true );
 
 //    xmlWriter.writeStartDocument();
-//        xmlWriter.writeStartElement( "SettingsMap" );
+//    xmlWriter.writeStartElement( "SettingsMap" );
+
+//    QString AncienGrp ("");
 
 //    QSettings::SettingsMap::const_iterator mi = map.begin();
 //    for( mi; mi != map.end(); ++mi )
 //    {
 //        QString string (mi.key().toStdString().c_str());
 //        QStringList groups = string.split("/");
-
-//        foreach( QString groupName, groups )
+//        if (groups.at(0) != AncienGrp)
 //        {
-//            xmlWriter.writeStartElement( groupName );
+//            if (AncienGrp != "")
+//                xmlWriter.writeEndElement();
+//            foreach( QString groupName, groups )
+//            {
+//                    xmlWriter.writeStartElement( groupName );
+//            }
+
+//            xmlWriter.writeCharacters( mi.value().toString() );
+
+//            xmlWriter.writeEndElement();
+//            AncienGrp = groups.at(0) ;
 //        }
-
-//        xmlWriter.writeCharacters( mi.value().toString() );
-
-//        foreach( QString groupName, groups )
+//        else
 //        {
+//            xmlWriter.writeStartElement(groups.at(1));
+//            xmlWriter.writeCharacters( mi.value().toString() );
 //            xmlWriter.writeEndElement();
 //        }
 //    }
+//    xmlWriter.writeEndElement();
 
 //    xmlWriter.writeEndElement();
 //    xmlWriter.writeEndDocument();
 
 //    return true;
 //}
+

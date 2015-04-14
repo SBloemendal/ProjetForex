@@ -4,7 +4,9 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
+#include <QSqlRecord>
 #include <QDebug>
+#include <QGraphicsScene>
 
 CoupleDevise::CoupleDevise() : coupleDevise(""), valeurAchat(""), valeurVente(""), variation(""), heure("")
 {
@@ -50,4 +52,15 @@ bool CoupleDevise::save(QSqlDatabase* db)
         qDebug() << "La requête n'a pas pu être executée" ;
         return false ;
     }
+}
+
+void CoupleDevise::dessineCourbe(QGraphicsScene *scene)
+{
+    QSqlQuery query ("SELECT achat, heure FROM COTATION WHERE nom='" + this->coupleDevise + "' AND jour=date('now') ORDER BY heure LIMIT ");
+    while (query.next())
+        qDebug() << query.value(1).toTime() ;
+
+
+
+    scene->addLine(QLineF(50, 450-(query.value(0).toDouble()), 60, 450-valeurAchat.toDouble())) ;
 }

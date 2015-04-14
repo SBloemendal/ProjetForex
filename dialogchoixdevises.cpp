@@ -131,6 +131,7 @@ void dialogChoixDevises::construitURL()
     settings.setValue("cb8", cb8->isChecked());
     settings.setValue("cb9", cb9->isChecked());
     settings.setValue("cb10", cb10->isChecked());
+    settings.setValue("urlchoixCouples", urlChoixCouples);
     settings.endGroup();
 
     emit dialogueFinis(urlChoixCouples) ;

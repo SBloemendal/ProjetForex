@@ -17,6 +17,7 @@ public:
 
     friend void principal::recupereDonnees() ;
     bool save(QSqlDatabase* db) ;
+    void dessineCourbe(QGraphicsScene* scene) ;
 
 private:
     QString coupleDevise ;

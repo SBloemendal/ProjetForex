@@ -11,6 +11,7 @@ class QSettings ;
 class QWebView ;
 class QSqlQueryModel ;
 class QTableView ;
+class QGraphicsScene ;
 
 /** \brief fichier h de la classe principal
  * \author Simon
@@ -42,6 +43,8 @@ private:
     QSqlDatabase db ;
     QSqlQueryModel* modeleQ ;
     QTableView* tableView ;
+    QGraphicsScene* scene ;
+    QGraphicsView* graphicsView ;
     int nombreCouplesSelectionnes ;
     QString urlPourModele ;
     QString urlChoixDevises ;
