@@ -51,10 +51,10 @@ void DialogueSimulationTransactions::selectionChange()  // Remplacer la , par un
 
     QString temp = modeleCalcul->data(modeleCalcul->index(1,0)).toString() ;
     qDebug() << modeleCalcul->data(modeleCalcul->index(1,0)).toString() ;
-    temp.replace(1,1,'.');
+    temp.replace(',','.');
     achat->setNum(valeur->text().toDouble() * temp.toDouble()) ;
 
     temp = modeleCalcul->data(modeleCalcul->index(1,1)).toString() ;
-    temp.replace(1,1,'.');
+    temp.replace(',','.');
     vente->setNum(valeur->text().toDouble() * temp.toDouble()) ;
 }

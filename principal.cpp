@@ -180,7 +180,7 @@ bool principal::creerBdd()
         qDebug() << "Connecté à la base de donnée" ;
         if (!db.tables().contains("COTATION")){             // Si la table COTATION n'existe pas, on la crée
             QString requeteSQL ;
-            requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date)";
+            requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date, posX int)";
             db.exec(requeteSQL) ;
             return true ;
         } else return true ;
