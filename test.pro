@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     dialogchoixdevises.cpp \
     dialogueoptions.cpp \
     dialogueintervalletemps.cpp \
-    dialoguesimulationtransactions.cpp
+    dialoguesimulationtransactions.cpp \
+    dialoguetransactionautomatique.cpp
 
 HEADERS += \
     principal.h \
@@ -27,4 +28,5 @@ HEADERS += \
     dialogchoixdevises.h \
     dialogueoptions.h \
     dialogueintervalletemps.h \
-    dialoguesimulationtransactions.h
+    dialoguesimulationtransactions.h \
+    dialoguetransactionautomatique.h

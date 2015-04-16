@@ -56,5 +56,5 @@ void DialogueSimulationTransactions::selectionChange()  // Remplacer la , par un
 
     temp = modeleCalcul->data(modeleCalcul->index(1,1)).toString() ;
     temp.replace(',','.');
-    vente->setNum(valeur->text().toDouble() * temp.toDouble()) ;
+    vente->setNum(valeur->text().toDouble() / temp.toDouble()) ;
 }

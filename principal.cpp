@@ -4,6 +4,8 @@
 #include "dialogueoptions.h"
 #include "dialogueintervalletemps.h"
 #include "dialoguesimulationtransactions.h"
+#include "dialoguetransactionautomatique.h"
+
 #include <iostream>
 #include <QDialog>
 #include <QUrl>
@@ -50,11 +52,15 @@ principal::principal() : nombreCouplesSelectionnes(0)
     modeleQ = new QSqlQueryModel ;
     modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom") ;
 
+    webView = new QWebView(this);
+    webView->hide();
+    connect (webView, SIGNAL(loadFinished(bool)), this, SLOT(recupereDonnees())) ;
+
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
     connexionHttp();
-    QTimer* timerRequete = new QTimer();
-    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-    timerRequete->start(10000);
+//    QTimer* timerRequete = new QTimer();
+//    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
+//    timerRequete->start(10000);
 
 
     // Design de la fenêtre principale
@@ -70,6 +76,7 @@ principal::principal() : nombreCouplesSelectionnes(0)
     menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
     menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
     menuDevises->addAction("Simulation de transactions", this, SLOT(simulationTransaction())) ;
+    menuDevises->addAction("Transactions automatiques", this, SLOT(transactionAuto())) ;
 
     QHBoxLayout* layout = new QHBoxLayout;
 
@@ -82,6 +89,7 @@ principal::principal() : nombreCouplesSelectionnes(0)
     tableView->horizontalHeader()->setDefaultSectionSize(90);
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->setSortingEnabled(true);
+    connect (tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(requeteGraph(QModelIndex))) ;
 
     graph = new QWebView ;
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=1&timescale=300&candles=50&style=line"));
@@ -94,7 +102,39 @@ principal::principal() : nombreCouplesSelectionnes(0)
     setCentralWidget(zoneCentrale);
 }
 
+void principal::requeteGraph(QModelIndex index)
+{
+    int choix ;
+    qDebug() << index.data(Qt::DisplayRole).toString() ;
+    if (index.data(Qt::DisplayRole).toString() == "EUR/USD")
+            choix = 1 ;
+    if (index.data(Qt::DisplayRole).toString() == "GBP/USD")
+            choix = 2 ;
+    if (index.data(Qt::DisplayRole).toString() == "USD/JPY")
+            choix = 3 ;
+    if (index.data(Qt::DisplayRole).toString() == "USD/CHF")
+            choix = 4 ;
+    if (index.data(Qt::DisplayRole).toString() == "EUR/GBP")
+            choix = 6 ;
+    if (index.data(Qt::DisplayRole).toString() == "EUR/JPY")
+            choix = 9 ;
+    if (index.data(Qt::DisplayRole).toString() == "EUR/CHF")
+            choix = 10 ;
+    if (index.data(Qt::DisplayRole).toString() == "GBP/JPY")
+            choix = 11 ;
+    if (index.data(Qt::DisplayRole).toString() == "CHF/JPY")
+            choix = 12 ;
+    if (index.data(Qt::DisplayRole).toString() == "GBP/CHF")
+            choix = 13 ;
 
+    graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=" + QString::number(choix) + "&timescale=300&candles=50&style=line")) ;
+}
+
+void principal::transactionAuto()
+{
+    DialogueTransactionAutomatique* transaction = new DialogueTransactionAutomatique ;
+    transaction->exec();
+}
 
 void principal::options()
 {
@@ -127,14 +167,12 @@ void principal::intervalleTemps()
 void principal::connexionHttp()
 {
     // Initialisation du webview avec la requete http
-    webView = new QWebView(this);
-    webView->hide();
+
     QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
     url += urlChoixDevises;
     url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
     webView->load(QUrl(url));
-    connect (webView, SIGNAL(loadFinished(bool)), this, SLOT(recupereDonnees())) ;
-    webView->close();
+
     recupereDonnees();
 }
 

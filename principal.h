@@ -13,6 +13,7 @@ class QWebView ;
 class QSqlQueryModel ;
 class QTableView ;
 class QGraphicsScene ;
+class QModelIndex ;
 
 /** \brief fichier h de la classe principal
  * \author Simon
@@ -37,6 +38,8 @@ private slots:
     void choixCoupleDevises() ;
     void intervalleTemps() ;
     void simulationTransaction() ;
+    void requeteGraph(QModelIndex index) ;
+    void transactionAuto() ;
     void options() ;
 
 private:
