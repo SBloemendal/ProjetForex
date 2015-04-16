@@ -1,4 +1,6 @@
 #include "dialogchoixdevises.h"
+#include "principal.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGroupBox>
@@ -7,11 +9,13 @@
 #include <QLabel>
 #include <QDebug>
 #include <QSettings>
-#include "principal.h"
+
+
+
 
 dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
 {
-    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
     settings.beginGroup("afficherDevises");

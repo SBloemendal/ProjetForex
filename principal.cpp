@@ -21,7 +21,6 @@
 #include <QWebView>
 #include <QWebFrame>
 
-
 /**
  * \file principal.cpp
  * \author Simon
@@ -33,11 +32,9 @@
 
 principal::principal() : nombreCouplesSelectionnes(0)
 {
-    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
-
-
     //settings.clear();
 
     urlFiltreDevises = settings.value("afficherDevises/urlchoixCouples", "WHERE jour=date('now')").toString() ;
@@ -52,7 +49,6 @@ principal::principal() : nombreCouplesSelectionnes(0)
     creerBdd() ;
     modeleQ = new QSqlQueryModel ;
     modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom") ;
-    scene = new QGraphicsScene;
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
     connexionHttp();
@@ -87,16 +83,18 @@ principal::principal() : nombreCouplesSelectionnes(0)
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->setSortingEnabled(true);
 
+    graph = new QWebView ;
+    graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=1&timescale=300&candles=50&style=line"));
 
-    scene->addPixmap(QPixmap("grapheVierge.gif")) ;
-    graphicsView = new QGraphicsView(scene, this);
 
     layout->addWidget(tableView);
-    layout->addWidget(graphicsView);
+    layout->addWidget(graph);
     zoneCentrale->setLayout(layout);
 
     setCentralWidget(zoneCentrale);
 }
+
+
 
 void principal::options()
 {
@@ -160,7 +158,6 @@ void principal::recupereDonnees()
 
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
-        couple.dessineCourbe(scene);
 
     }
     // et on rafraichit le QSqlQuery
@@ -191,87 +188,177 @@ bool principal::creerBdd()
 }
 
 
+bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
+  QXmlStreamReader xmlReader(&device);
+  QStringList elements;
 
-bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map )
-{
-    QXmlStreamReader xmlReader( &device );
+  // Solange Ende nicht erreicht und kein Fehler aufgetreten ist
+  while (!xmlReader.atEnd() && !xmlReader.hasError()) {
+    // Nächsten Token lesen
+    xmlReader.readNext();
 
-    QString currentElementName;
-    while( !xmlReader.atEnd() )
-    {
-        xmlReader.readNext();
-        while( xmlReader.isStartElement() )
-        {
-            if( xmlReader.name() == "SettingsMap" )
-            {
-                                xmlReader.readNext();
-                continue;
-            }
+    // Wenn Token ein Startelement
+    if (xmlReader.isStartElement() && xmlReader.name() != "Settings") {
+      // Element zur Liste hinzufügen
+      elements.append(xmlReader.name().toString());
+    // Wenn Token ein Endelement
+    } else if (xmlReader.isEndElement()) {
+      // Letztes Element löschen
+      if(!elements.isEmpty()) elements.removeLast();
+    // Wenn Token einen Wert enthält
+    } else if (xmlReader.isCharacters() && !xmlReader.isWhitespace()) {
+      QString key;
 
-            if( !currentElementName.isEmpty() )
-            {
-                currentElementName += "/";
-            }
-            currentElementName += xmlReader.name().toString();
-            xmlReader.readNext();
-        }
+      // Elemente zu String hinzufügen
+      for(int i = 0; i < elements.size(); i++) {
+        if(i != 0) key += "/";
+        key += elements.at(i);
+      }
 
-        if( xmlReader.isEndElement() )
-        {
-            continue;
-        }
-
-        if( xmlReader.isCharacters() && !xmlReader.isWhitespace() )
-        {
-            QString key = currentElementName;
-            QString value = xmlReader.text().toString();
-
-            map[ key ] = value;
-
-            currentElementName.clear();
-        }
+      // Wert in Map eintragen
+      map[key] = xmlReader.text().toString();
     }
+  }
 
-     if( xmlReader.hasError() )
-     {
-        return false;
-     }
+  // Bei Fehler Warnung ausgeben
+  if (xmlReader.hasError()) {
+    qWarning() << xmlReader.errorString();
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
-bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
-{
-    QXmlStreamWriter xmlWriter( &device );
-    xmlWriter.setAutoFormatting( true );
+bool writeXmlFile(QIODevice &device, const QSettings::SettingsMap &map) {
+  QXmlStreamWriter xmlWriter(&device);
 
-    xmlWriter.writeStartDocument();
-        xmlWriter.writeStartElement( "SettingsMap" );
+  xmlWriter.setAutoFormatting(true);
+  xmlWriter.writeStartDocument();
+  xmlWriter.writeStartElement("Settings");
 
-    QSettings::SettingsMap::const_iterator mi = map.begin();
-    for( mi; mi != map.end(); ++mi )
-    {
-        QString string (mi.key().toStdString().c_str());
-        QStringList groups = string.split("/");
+  QStringList prev_elements;
+  QSettings::SettingsMap::ConstIterator map_i;
 
-        foreach( QString groupName, groups )
-        {
-            xmlWriter.writeStartElement( groupName );
-        }
+  // Alle Elemente der Map durchlaufen
+  for (map_i = map.begin(); map_i != map.end(); map_i++) {
 
-        xmlWriter.writeCharacters( mi.value().toString() );
+    QStringList elements = map_i.key().split("/");
 
-        foreach( QString groupName, groups )
-        {
-            xmlWriter.writeEndElement();
-        }
+    int x = 0;
+    // Zu schließende Elemente ermitteln
+    while(x < prev_elements.size() && elements.at(x) == prev_elements.at(x)) {
+      x++;
     }
 
+    // Elemente schließen
+    for(int i = prev_elements.size() - 1; i >= x; i--) {
+      xmlWriter.writeEndElement();
+    }
+
+    // Elemente öffnen
+    for (int i = x; i < elements.size(); i++) {
+      xmlWriter.writeStartElement(elements.at(i));
+    }
+
+    // Wert eintragen
+    xmlWriter.writeCharacters(map_i.value().toString());
+
+    prev_elements = elements;
+  }
+
+  // Noch offene Elemente schließen
+  for(int i = 0; i < prev_elements.size(); i++) {
     xmlWriter.writeEndElement();
-    xmlWriter.writeEndDocument();
+  }
 
-    return true;
+  xmlWriter.writeEndElement();
+  xmlWriter.writeEndDocument();
+
+  return true;
 }
+
+
+
+//bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map )
+//{
+//    QXmlStreamReader xmlReader( &device );
+
+//    QString currentElementName;
+//    while( !xmlReader.atEnd() )
+//    {
+//        xmlReader.readNext();
+//        while( xmlReader.isStartElement() )
+//        {
+//            if( xmlReader.name() == "SettingsMap" )
+//            {
+//                                xmlReader.readNext();
+//                continue;
+//            }
+
+//            if( !currentElementName.isEmpty() )
+//            {
+//                currentElementName += "/";
+//            }
+//            currentElementName += xmlReader.name().toString();
+//            xmlReader.readNext();
+//        }
+
+//        if( xmlReader.isEndElement() )
+//        {
+//            continue;
+//        }
+
+//        if( xmlReader.isCharacters() && !xmlReader.isWhitespace() )
+//        {
+//            QString key = currentElementName;
+//            QString value = xmlReader.text().toString();
+
+//            map[ key ] = value;
+
+//            currentElementName.clear();
+//        }
+//    }
+
+//     if( xmlReader.hasError() )
+//     {
+//        return false;
+//     }
+
+//    return true;
+//}
+
+//bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
+//{
+//    QXmlStreamWriter xmlWriter( &device );
+//    xmlWriter.setAutoFormatting( true );
+
+//    xmlWriter.writeStartDocument();
+//        xmlWriter.writeStartElement( "SettingsMap" );
+
+//    QSettings::SettingsMap::const_iterator mi = map.begin();
+//    for( mi; mi != map.end(); ++mi )
+//    {
+//        QString string (mi.key().toStdString().c_str());
+//        QStringList groups = string.split("/");
+
+//        foreach( QString groupName, groups )
+//        {
+//            xmlWriter.writeStartElement( groupName );
+//        }
+
+//        xmlWriter.writeCharacters( mi.value().toString() );
+
+//        foreach( QString groupName, groups )
+//        {
+//            xmlWriter.writeEndElement();
+//        }
+//    }
+
+//    xmlWriter.writeEndElement();
+//    xmlWriter.writeEndDocument();
+
+//    return true;
+//}
 
 //bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
 //{

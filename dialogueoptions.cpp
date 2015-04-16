@@ -1,4 +1,6 @@
 #include "dialogueoptions.h"
+#include "principal.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGroupBox>
@@ -9,13 +11,14 @@
 #include <QSettings>
 #include <QLineEdit>
 #include <QFormLayout>
-#include "principal.h"
+
 
 DialogueOptions::DialogueOptions()
 {
-    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
+    QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+
     settings.beginGroup("choixDevises");
 
     setWindowTitle("Options");
@@ -39,7 +42,6 @@ DialogueOptions::DialogueOptions()
     groupBoxBddLayout->addRow("Site &Forex :", urlForex) ;
     groupBoxBddLayout->addRow(infoBdd);
     groupBoxBdd->setLayout(groupBoxBddLayout);
-
 
     QGroupBox *groupBoxDevises = new QGroupBox("Données stockées", this) ;
     QVBoxLayout* layoutgroupBoxDevises = new QVBoxLayout ;

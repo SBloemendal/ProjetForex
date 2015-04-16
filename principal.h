@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QSqlDatabase>
 #include <QDebug>
+#include <QWebPage>
 
 class QSettings ;
 class QWebView ;
@@ -40,11 +41,10 @@ private slots:
 
 private:
     QWebView* webView ;
+    QWebView* graph ;
     QSqlDatabase db ;
     QSqlQueryModel* modeleQ ;
     QTableView* tableView ;
-    QGraphicsScene* scene ;
-    QGraphicsView* graphicsView ;
     int nombreCouplesSelectionnes ;
     QString urlPourModele ;
     QString urlChoixDevises ;

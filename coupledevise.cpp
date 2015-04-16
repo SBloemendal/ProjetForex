@@ -54,29 +54,29 @@ bool CoupleDevise::save(QSqlDatabase* db)
     }
 }
 
-void CoupleDevise::dessineCourbe(QGraphicsScene *scene)
-{
-    QSqlQuery query ("SELECT achat, heure, posX FROM COTATION WHERE nom='" + this->coupleDevise + "' AND jour=date('now') ORDER BY heure DESC LIMIT 2");
-//    while (query.next())
-//        qDebug() << query.value(1).toTime() ;
+//void CoupleDevise::dessineCourbe(QGraphicsScene *scene)
+//{
+//    QSqlQuery query ("SELECT achat, heure, posX FROM COTATION WHERE nom='" + this->coupleDevise + "' AND jour=date('now') ORDER BY heure DESC LIMIT 2");
+////    while (query.next())
+////        qDebug() << query.value(1).toTime() ;
 
-    query.first() ;
-    int x (query.value(2).toInt()) ;
-    QTime heureDerniere = query.value(1).toTime() ;
-    query.next() ;
-    QTime heureAvantDerniere = query.value(1).toTime() ;
+//    query.first() ;
+//    int x (query.value(2).toInt()) ;
+//    QTime heureDerniere = query.value(1).toTime() ;
+//    query.next() ;
+//    QTime heureAvantDerniere = query.value(1).toTime() ;
 
-    x += heureAvantDerniere.secsTo(heureDerniere) ;
+//    x += heureAvantDerniere.secsTo(heureDerniere) ;
 
-    query.first() ;
-    scene->addLine(x, 450-(query.value(0).toDouble())*100, x+(heureDerniere.secsTo(QTime::currentTime())), 450-valeurAchat.toDouble()*100) ;
+//    query.first() ;
+//    scene->addLine(x, 450-(query.value(0).toDouble())*100, x+(heureDerniere.secsTo(QTime::currentTime())), 450-valeurAchat.toDouble()*100) ;
 
-    x += heureDerniere.secsTo(QTime::currentTime()) ;
+//    x += heureDerniere.secsTo(QTime::currentTime()) ;
 
-    query.clear();
+//    query.clear();
 
-    query.prepare("UPDATE COTATION SET posX=:posX WHERE id=last_insert_rowid() ") ;
-    query.bindValue(":posX", x);
-    query.exec() ;
-    query.clear();
-}
+//    query.prepare("UPDATE COTATION SET posX=:posX WHERE id=last_insert_rowid() ") ;
+//    query.bindValue(":posX", x);
+//    query.exec() ;
+//    query.clear();
+//}
