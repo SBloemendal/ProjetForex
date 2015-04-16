@@ -1,16 +1,14 @@
 #include "dialogueoptions.h"
 #include "principal.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QDir>
+#include <QBoxLayout>
 #include <QGroupBox>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QLabel>
 #include <QCheckBox>
 #include <QPushButton>
-#include <QLabel>
-#include <QDebug>
-#include <QSettings>
-#include <QLineEdit>
-#include <QFormLayout>
 
 
 DialogueOptions::DialogueOptions()

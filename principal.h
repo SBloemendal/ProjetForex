@@ -1,19 +1,16 @@
 #ifndef PRINCIPAL_H
 #define PRINCIPAL_H
 
-#include <QtWidgets>
-#include <QWidget>
+#include <QApplication>
 #include <QMainWindow>
 #include <QSqlDatabase>
-#include <QDebug>
-#include <QWebPage>
+#include <QSettings>
+#include <QModelIndex>
 
-class QSettings ;
 class QWebView ;
 class QSqlQueryModel ;
 class QTableView ;
-class QGraphicsScene ;
-class QModelIndex ;
+
 
 /** \brief fichier h de la classe principal
  * \author Simon

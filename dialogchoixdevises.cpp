@@ -1,16 +1,12 @@
 #include "dialogchoixdevises.h"
 #include "principal.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QDir>
+#include <QBoxLayout>
 #include <QGroupBox>
 #include <QCheckBox>
 #include <QPushButton>
 #include <QLabel>
-#include <QDebug>
-#include <QSettings>
-
-
 
 
 dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")

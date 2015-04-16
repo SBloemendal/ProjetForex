@@ -6,22 +6,19 @@
 #include "dialoguesimulationtransactions.h"
 #include "dialoguetransactionautomatique.h"
 
-#include <iostream>
-#include <QDialog>
-#include <QUrl>
-#include <QtWidgets>
-#include <QDebug>
 #include <QWebElement>
-#include <QWebPage>
-#include <QObject>
-#include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
 #include <QSqlQueryModel>
 #include <QTableView>
 #include <QTimer>
 #include <QWebView>
 #include <QWebFrame>
+#include <QDir>
+#include <QMenuBar>
+#include <QBoxLayout>
+#include <QHeaderView>
+#include <QXmlStreamReader>
+
 
 /**
  * \file principal.cpp
@@ -58,9 +55,9 @@ principal::principal() : nombreCouplesSelectionnes(0)
 
     // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
     connexionHttp();
-//    QTimer* timerRequete = new QTimer();
-//    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-//    timerRequete->start(10000);
+    QTimer* timerRequete = new QTimer();
+    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
+    timerRequete->start(10000);
 
 
     // Design de la fenêtre principale
@@ -314,131 +311,3 @@ bool writeXmlFile(QIODevice &device, const QSettings::SettingsMap &map) {
 
   return true;
 }
-
-
-
-//bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map )
-//{
-//    QXmlStreamReader xmlReader( &device );
-
-//    QString currentElementName;
-//    while( !xmlReader.atEnd() )
-//    {
-//        xmlReader.readNext();
-//        while( xmlReader.isStartElement() )
-//        {
-//            if( xmlReader.name() == "SettingsMap" )
-//            {
-//                                xmlReader.readNext();
-//                continue;
-//            }
-
-//            if( !currentElementName.isEmpty() )
-//            {
-//                currentElementName += "/";
-//            }
-//            currentElementName += xmlReader.name().toString();
-//            xmlReader.readNext();
-//        }
-
-//        if( xmlReader.isEndElement() )
-//        {
-//            continue;
-//        }
-
-//        if( xmlReader.isCharacters() && !xmlReader.isWhitespace() )
-//        {
-//            QString key = currentElementName;
-//            QString value = xmlReader.text().toString();
-
-//            map[ key ] = value;
-
-//            currentElementName.clear();
-//        }
-//    }
-
-//     if( xmlReader.hasError() )
-//     {
-//        return false;
-//     }
-
-//    return true;
-//}
-
-//bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
-//{
-//    QXmlStreamWriter xmlWriter( &device );
-//    xmlWriter.setAutoFormatting( true );
-
-//    xmlWriter.writeStartDocument();
-//        xmlWriter.writeStartElement( "SettingsMap" );
-
-//    QSettings::SettingsMap::const_iterator mi = map.begin();
-//    for( mi; mi != map.end(); ++mi )
-//    {
-//        QString string (mi.key().toStdString().c_str());
-//        QStringList groups = string.split("/");
-
-//        foreach( QString groupName, groups )
-//        {
-//            xmlWriter.writeStartElement( groupName );
-//        }
-
-//        xmlWriter.writeCharacters( mi.value().toString() );
-
-//        foreach( QString groupName, groups )
-//        {
-//            xmlWriter.writeEndElement();
-//        }
-//    }
-
-//    xmlWriter.writeEndElement();
-//    xmlWriter.writeEndDocument();
-
-//    return true;
-//}
-
-//bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map )
-//{
-//    QXmlStreamWriter xmlWriter( &device );
-//    xmlWriter.setAutoFormatting( true );
-
-//    xmlWriter.writeStartDocument();
-//    xmlWriter.writeStartElement( "SettingsMap" );
-
-//    QString AncienGrp ("");
-
-//    QSettings::SettingsMap::const_iterator mi = map.begin();
-//    for( mi; mi != map.end(); ++mi )
-//    {
-//        QString string (mi.key().toStdString().c_str());
-//        QStringList groups = string.split("/");
-//        if (groups.at(0) != AncienGrp)
-//        {
-//            if (AncienGrp != "")
-//                xmlWriter.writeEndElement();
-//            foreach( QString groupName, groups )
-//            {
-//                    xmlWriter.writeStartElement( groupName );
-//            }
-
-//            xmlWriter.writeCharacters( mi.value().toString() );
-
-//            xmlWriter.writeEndElement();
-//            AncienGrp = groups.at(0) ;
-//        }
-//        else
-//        {
-//            xmlWriter.writeStartElement(groups.at(1));
-//            xmlWriter.writeCharacters( mi.value().toString() );
-//            xmlWriter.writeEndElement();
-//        }
-//    }
-//    xmlWriter.writeEndElement();
-
-//    xmlWriter.writeEndElement();
-//    xmlWriter.writeEndDocument();
-
-//    return true;
-//}
-

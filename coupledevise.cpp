@@ -1,12 +1,8 @@
 #include "coupledevise.h"
-#include <QSqlDatabase>
-#include <QVariant>
-#include <QtSql/QSqlDatabase>
+
 #include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
-#include <QSqlRecord>
 #include <QDebug>
-#include <QGraphicsScene>
+
 
 CoupleDevise::CoupleDevise() : coupleDevise(""), valeurAchat(""), valeurVente(""), variation(""), heure("")
 {

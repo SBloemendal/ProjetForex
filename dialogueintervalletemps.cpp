@@ -1,14 +1,14 @@
 #include "dialogueintervalletemps.h"
+
 #include <QVBoxLayout>
 #include <QSqlQueryModel>
-#include <QSqlTableModel>
-#include <QTableView>
 #include <QComboBox>
 #include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QCalendarWidget>
 #include <QDateEdit>
+#include <QPushButton>
+#include <QTableView>
+#include <QHeaderView>
+
 
 DialogueIntervalleTemps::DialogueIntervalleTemps()
 {

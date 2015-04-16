@@ -1,13 +1,12 @@
 #include "dialoguesimulationtransactions.h"
 
-#include <QDebug>
+#include <QSqlQueryModel>
 #include <QComboBox>
-#include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QSqlQueryModel>
-#include <QSqlRecord>
+#include <QFormLayout>
+
 
 DialogueSimulationTransactions::DialogueSimulationTransactions()
 {
@@ -46,11 +45,9 @@ DialogueSimulationTransactions::~DialogueSimulationTransactions()
 void DialogueSimulationTransactions::selectionChange()  // Remplacer la , par un . quelque soit son emplacement
 {
     QSqlQueryModel* modeleCalcul = new QSqlQueryModel;
-    qDebug() << selection->currentText() ;
     modeleCalcul->setQuery("SELECT achat, vente FROM COTATION WHERE nom='" + selection->currentText() + "'") ;
 
     QString temp = modeleCalcul->data(modeleCalcul->index(1,0)).toString() ;
-    qDebug() << modeleCalcul->data(modeleCalcul->index(1,0)).toString() ;
     temp.replace(',','.');
     achat->setNum(valeur->text().toDouble() * temp.toDouble()) ;
 
