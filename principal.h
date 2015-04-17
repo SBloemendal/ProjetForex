@@ -22,15 +22,14 @@ class principal : public QMainWindow
 
 public:
     principal();
-
     bool creerBdd() ;
 
 public slots:
     void recupereDonnees() ;
-    void setUrlChoixDevises(QString url) { urlChoixDevises = url ;}
-    void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
 
 private slots:
+    void setUrlChoixDevises(QString url) { urlChoixDevises = url ;}
+    void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
     void connexionHttp() ;
     void choixCoupleDevises() ;
     void intervalleTemps() ;

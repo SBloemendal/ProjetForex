@@ -2,7 +2,6 @@
 #define COUPLEDEVISE_H
 
 #include <QObject>
-#include <QString>
 #include "principal.h"
 
 class QSqlDatabase ;

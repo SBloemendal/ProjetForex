@@ -19,7 +19,7 @@ public:
 signals:
     QString dialogueFinis(QString);
 
-public slots:
+private slots:
     void construitURL();
     void parametreParDefaut();
 
