@@ -42,10 +42,9 @@ private slots:
 private:
     QWebView* webView ;
     QWebView* graph ;
-    QSqlDatabase db ;
     QSqlQueryModel* modeleQ ;
     QTableView* tableView ;
-    int nombreCouplesSelectionnes ;
+    QSqlDatabase db ;
     QString urlPourModele ;
     QString urlChoixDevises ;
     QString urlFiltreDevises ;
@@ -58,5 +57,6 @@ private:
 
 bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map );
 bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map );
+
 #endif // PRINCIPAL_H
 

@@ -29,7 +29,7 @@
  * \todo ameliorer la boucle de recuperation des donnes html, utiliser un tableau[i]
  */
 
-principal::principal() : nombreCouplesSelectionnes(0)
+principal::principal()
 {
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
@@ -138,7 +138,7 @@ void principal::options()
     DialogueOptions* options = new DialogueOptions ;
     connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     options->exec();
-    recupereDonnees();
+    //recupereDonnees();
 }
 
 void principal::choixCoupleDevises()
@@ -212,7 +212,7 @@ bool principal::creerBdd()
         qDebug() << "Connecté à la base de donnée" ;
         if (!db.tables().contains("COTATION")){             // Si la table COTATION n'existe pas, on la crée
             QString requeteSQL ;
-            requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date, posX int)";
+            requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date)";
             db.exec(requeteSQL) ;
             return true ;
         } else return true ;

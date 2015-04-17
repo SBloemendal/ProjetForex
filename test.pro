@@ -3,7 +3,7 @@
 # Project created by QtCreator 2015-03-25T15:19:05
 #
 #-------------------------------------------------
-QT += network widgets core webkitwidgets sql
+QT += widgets core webkitwidgets sql
 
 
 TARGET = test
