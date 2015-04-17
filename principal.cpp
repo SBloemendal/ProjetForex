@@ -185,11 +185,11 @@ void principal::recupereDonnees()
 {
     // Pour chaque couple de devises, on crée un objet 'CoupleDevise' et on y stocke les valeurs récupéré du web service
     // On accède aux valeurs par le biais des CSSselector grace à un QWebElement
+
     QWebElement element ;
-    //for (int i = 1 ; i < 14 ; i++){
+
     foreach (QString index, listeCouples) {
         CoupleDevise couple ;
-        qDebug() << index ;
         element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + " span.ftqa11bb") ; // CSSselector pour le nom du couple de devises
         couple.coupleDevise = element.toPlainText() ;
         element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=bid]") ; // CSSselector pour la valeur d'achat
@@ -204,6 +204,7 @@ void principal::recupereDonnees()
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
     }
+
     rafraichitSQLQueryModel();
 }
 

@@ -191,6 +191,7 @@ void DialogueOptions::construitURL()
     settings.setValue("loginBdd", loginBdd->text());
     settings.setValue("passwordBdd", passwordBdd->text());
     settings.setValue("urlForex", urlForex->text());
+    //settings.setValue("listeCouples", listeCouples);
     settings.endGroup();
 
     emit dialogueFinis(urlChoixCouples, listeCouples) ;
