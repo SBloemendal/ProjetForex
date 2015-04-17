@@ -17,7 +17,7 @@ public:
     ~DialogueOptions();
 
 signals:
-    QString dialogueFinis(QString);
+    QString dialogueFinis(QString, QList<QString>);
 
 private slots:
     void construitURL();

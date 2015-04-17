@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QModelIndex>
 
+
 class QWebView ;
 class QSqlQueryModel ;
 class QTableView ;
@@ -23,12 +24,13 @@ class principal : public QMainWindow
 public:
     principal();
     bool creerBdd() ;
+    void rafraichitSQLQueryModel() ;
 
 public slots:
     void recupereDonnees() ;
 
 private slots:
-    void setUrlChoixDevises(QString url) { urlChoixDevises = url ;}
+    void setUrlChoixDevises(QString url, QList<QString> liste) { urlChoixDevises = url ; listeCouples = liste ; }
     void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
     void connexionHttp() ;
     void choixCoupleDevises() ;
@@ -52,6 +54,7 @@ private:
     QString loginBdd ;
     QString passwordBdd ;
     QString urlForex ;
+    QList<QString> listeCouples ;
 };
 
 bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map );

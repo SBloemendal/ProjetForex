@@ -47,7 +47,7 @@ principal::principal()
     // On crée la base de donnée et le modèle qui y sera attaché, le modèle graphique, et on initialise un webview
     creerBdd() ;
     modeleQ = new QSqlQueryModel ;
-    modeleQ->setQuery("SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom") ;
+    rafraichitSQLQueryModel();
 
     webView = new QWebView(this);
     webView->hide();
@@ -86,6 +86,7 @@ principal::principal()
     tableView->horizontalHeader()->setDefaultSectionSize(90);
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->setSortingEnabled(true);
+    tableView->selectionModel()->currentIndex().row();
     connect (tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(requeteGraph(QModelIndex))) ;
 
     graph = new QWebView ;
@@ -103,26 +104,27 @@ principal::principal()
 void principal::requeteGraph(QModelIndex index)
 {
     int choix ;
-    qDebug() << index.data(Qt::DisplayRole).toString() ;
-    if (index.data(Qt::DisplayRole).toString() == "EUR/USD")
+    int row = index.row();
+
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "EUR/USD")
             choix = 1 ;
-    if (index.data(Qt::DisplayRole).toString() == "GBP/USD")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "GBP/USD")
             choix = 2 ;
-    if (index.data(Qt::DisplayRole).toString() == "USD/JPY")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "USD/JPY")
             choix = 3 ;
-    if (index.data(Qt::DisplayRole).toString() == "USD/CHF")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "USD/CHF")
             choix = 4 ;
-    if (index.data(Qt::DisplayRole).toString() == "EUR/GBP")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "EUR/GBP")
             choix = 6 ;
-    if (index.data(Qt::DisplayRole).toString() == "EUR/JPY")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "EUR/JPY")
             choix = 9 ;
-    if (index.data(Qt::DisplayRole).toString() == "EUR/CHF")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "EUR/CHF")
             choix = 10 ;
-    if (index.data(Qt::DisplayRole).toString() == "GBP/JPY")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "GBP/JPY")
             choix = 11 ;
-    if (index.data(Qt::DisplayRole).toString() == "CHF/JPY")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "CHF/JPY")
             choix = 12 ;
-    if (index.data(Qt::DisplayRole).toString() == "GBP/CHF")
+    if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "GBP/CHF")
             choix = 13 ;
 
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=" + QString::number(choix) + "&timescale=300&candles=50&style=line")) ;
@@ -139,7 +141,7 @@ void principal::transactionAuto()
 void principal::options()
 {
     DialogueOptions* options = new DialogueOptions ;
-    connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString))); // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlChoixDevise
+    connect(options, SIGNAL(dialogueFinis(QString,QList<QString>)), this, SLOT(setUrlChoixDevises(QString,QList<QString>))); // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlChoixDevise
     options->exec();
 }
 
@@ -149,7 +151,7 @@ void principal::choixCoupleDevises()
     dialogChoixDevises* choix = new dialogChoixDevises;
     connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString))); // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlFiltreDevise
     choix->exec();
-    recupereDonnees(); // Et on reactualise le modele avec les nouveaux choix
+    rafraichitSQLQueryModel(); // Et on reactualise le modele avec les nouveaux choix
 }
 
 // Ouvre une fenetre de dialogue 'simulation de transaction'
@@ -184,24 +186,31 @@ void principal::recupereDonnees()
     // Pour chaque couple de devises, on crée un objet 'CoupleDevise' et on y stocke les valeurs récupéré du web service
     // On accède aux valeurs par le biais des CSSselector grace à un QWebElement
     QWebElement element ;
-    for (int i = 1 ; i < 14 ; i++){
+    //for (int i = 1 ; i < 14 ; i++){
+    foreach (QString index, listeCouples) {
         CoupleDevise couple ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + QString::number(i) + " span.ftqa11bb") ; // CSSselector pour le nom du couple de devises
+        qDebug() << index ;
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + " span.ftqa11bb") ; // CSSselector pour le nom du couple de devises
         couple.coupleDevise = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + QString::number(i) + ">td[class*=bid]") ; // CSSselector pour la valeur d'achat
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=bid]") ; // CSSselector pour la valeur d'achat
         couple.valeurAchat = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + QString::number(i) + ">td[class*=ask]") ; // CSSselector pour la valeur de vente
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=ask]") ; // CSSselector pour la valeur de vente
         couple.valeurVente = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + QString::number(i) + ">td[class*=pcp]") ; // CSSselector pour le pourcentage de variation de la cotation
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=pcp]") ; // CSSselector pour le pourcentage de variation de la cotation
         couple.variation = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + QString::number(i) + ">td[class*=time]") ; // CSSselector pour l'heure de la cotation
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=time]") ; // CSSselector pour l'heure de la cotation
         couple.heure = element.toPlainText() ;
 
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
-
     }
-    // et on rafraichit le QSqlQuery
+    rafraichitSQLQueryModel();
+}
+
+
+// On rafraichit le QSqlQuery
+void principal::rafraichitSQLQueryModel()
+{
     urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom" ;
     modeleQ->setQuery(urlPourModele) ;
 }

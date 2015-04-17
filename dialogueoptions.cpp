@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QPushButton>
+#include <qDebug>
 
 
 DialogueOptions::DialogueOptions()
@@ -127,26 +128,51 @@ void DialogueOptions::construitURL()
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
 
-    if (cb1->isChecked())
+    QList<QString> listeCouples ;
+
+    if (cb1->isChecked()){
         urlChoixCouples += "1;";
-    if (cb2->isChecked())
+        listeCouples.append("1");
+    }
+    if (cb2->isChecked()){
         urlChoixCouples += "2;";
-    if (cb3->isChecked())
+        listeCouples.append("2");
+    }
+    if (cb3->isChecked()){
         urlChoixCouples += "3;";
-    if (cb4->isChecked())
+        listeCouples.append("3");
+    }
+    if (cb4->isChecked()){
         urlChoixCouples += "4;";
-    if (cb5->isChecked())
+        listeCouples.append("4");
+        }
+    if (cb5->isChecked()){
         urlChoixCouples += "6;";
-    if (cb6->isChecked())
+        listeCouples.append("6");
+    }
+    if (cb6->isChecked()){
         urlChoixCouples += "9;";
-    if (cb7->isChecked())
+        listeCouples.append("9");
+    }
+    if (cb7->isChecked()){
         urlChoixCouples += "10;";
-    if (cb8->isChecked())
+        listeCouples.append("10");
+    }
+    if (cb8->isChecked()){
         urlChoixCouples += "11;";
-    if (cb9->isChecked())
+        listeCouples.append("11");
+    }
+    if (cb9->isChecked()){
         urlChoixCouples += "12;";
-    if (cb10->isChecked())
+        listeCouples.append("12");
+    }
+    if (cb10->isChecked()){
         urlChoixCouples += "13;";
+        listeCouples.append("13");
+    }
+    foreach (QString ligne, listeCouples) {
+        qDebug() << ligne ;
+    }
 
     settings.beginGroup("choixDevises");
     settings.setValue("cb1", cb1->isChecked());
@@ -167,6 +193,6 @@ void DialogueOptions::construitURL()
     settings.setValue("urlForex", urlForex->text());
     settings.endGroup();
 
-    emit dialogueFinis(urlChoixCouples) ;
+    emit dialogueFinis(urlChoixCouples, listeCouples) ;
     this->close();
 }
