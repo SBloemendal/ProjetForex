@@ -1,6 +1,5 @@
 #include "dialogchoixdevises.h"
 #include "principal.h"
-
 #include <QDir>
 #include <QBoxLayout>
 #include <QGroupBox>

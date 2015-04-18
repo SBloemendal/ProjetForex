@@ -1,6 +1,5 @@
 #include "dialogueoptions.h"
 #include "principal.h"
-
 #include <QDir>
 #include <QBoxLayout>
 #include <QGroupBox>
@@ -9,7 +8,6 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QPushButton>
-#include <qDebug>
 
 
 DialogueOptions::DialogueOptions()
@@ -93,12 +91,9 @@ DialogueOptions::DialogueOptions()
     QPushButton* annuler = new QPushButton(tr("&Annuler"));
     connect(annuler, SIGNAL(clicked()), this, SLOT(close()));
     annuler->setDefault(true);
-    QPushButton* defaut = new QPushButton(tr("Par &défaut"));
-    connect(defaut, SIGNAL(clicked()), this, SLOT(parametreParDefaut()));
     QPushButton* valider = new QPushButton(tr("&Valider"));
     connect(valider, SIGNAL(clicked()), this, SLOT(construitURL()));
     layoutBoutons->addWidget(annuler);
-    layoutBoutons->addWidget(defaut);
     layoutBoutons->addWidget(valider);
 
     layoutPrincipal->addWidget(groupBoxBdd);
@@ -108,19 +103,14 @@ DialogueOptions::DialogueOptions()
     settings.endGroup();
 }
 
+
 DialogueOptions::~DialogueOptions()
 {
 
 }
 
-void DialogueOptions::parametreParDefaut()
-{
-    const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
-    QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
-    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
-    settings.clear();
-    this->close();
-}
+
+
 
 void DialogueOptions::construitURL()
 {
@@ -128,51 +118,26 @@ void DialogueOptions::construitURL()
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
 
-    QList<QString> listeCouples ;
-
-    if (cb1->isChecked()){
+    if (cb1->isChecked())
         urlChoixCouples += "1;";
-        listeCouples.append("1");
-    }
-    if (cb2->isChecked()){
+    if (cb2->isChecked())
         urlChoixCouples += "2;";
-        listeCouples.append("2");
-    }
-    if (cb3->isChecked()){
+    if (cb3->isChecked())
         urlChoixCouples += "3;";
-        listeCouples.append("3");
-    }
-    if (cb4->isChecked()){
+    if (cb4->isChecked())
         urlChoixCouples += "4;";
-        listeCouples.append("4");
-        }
-    if (cb5->isChecked()){
+    if (cb5->isChecked())
         urlChoixCouples += "6;";
-        listeCouples.append("6");
-    }
-    if (cb6->isChecked()){
+    if (cb6->isChecked())
         urlChoixCouples += "9;";
-        listeCouples.append("9");
-    }
-    if (cb7->isChecked()){
+    if (cb7->isChecked())
         urlChoixCouples += "10;";
-        listeCouples.append("10");
-    }
-    if (cb8->isChecked()){
+    if (cb8->isChecked())
         urlChoixCouples += "11;";
-        listeCouples.append("11");
-    }
-    if (cb9->isChecked()){
+    if (cb9->isChecked())
         urlChoixCouples += "12;";
-        listeCouples.append("12");
-    }
-    if (cb10->isChecked()){
+    if (cb10->isChecked())
         urlChoixCouples += "13;";
-        listeCouples.append("13");
-    }
-    foreach (QString ligne, listeCouples) {
-        qDebug() << ligne ;
-    }
 
     settings.beginGroup("choixDevises");
     settings.setValue("cb1", cb1->isChecked());
@@ -191,9 +156,8 @@ void DialogueOptions::construitURL()
     settings.setValue("loginBdd", loginBdd->text());
     settings.setValue("passwordBdd", passwordBdd->text());
     settings.setValue("urlForex", urlForex->text());
-    //settings.setValue("listeCouples", listeCouples);
     settings.endGroup();
 
-    emit dialogueFinis(urlChoixCouples, listeCouples) ;
+    emit dialogueFinis(urlChoixCouples) ;
     this->close();
 }

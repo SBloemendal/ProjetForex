@@ -3,10 +3,10 @@
 # Project created by QtCreator 2015-03-25T15:19:05
 #
 #-------------------------------------------------
-QT += widgets core webkitwidgets sql
+QT += core widgets webkitwidgets sql
 
 
-TARGET = test
+TARGET = projet3_TSDI
 CONFIG   += console
 CONFIG   -= app_bundle
 

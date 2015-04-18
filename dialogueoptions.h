@@ -1,3 +1,12 @@
+/**
+ * \file dialogueoptions.h
+ * \author Simon
+ * \version 1.0
+ * \date 2015-04-27
+ * \brief Classe pour afficher la fenetre d'options générales
+ */
+
+
 #ifndef DIALOGUEOPTIONS_H
 #define DIALOGUEOPTIONS_H
 
@@ -8,6 +17,7 @@
 class QLineEdit ;
 class QCheckBox ;
 
+
 class DialogueOptions : public QDialog
 {
     Q_OBJECT
@@ -17,11 +27,10 @@ public:
     ~DialogueOptions();
 
 signals:
-    QString dialogueFinis(QString, QList<QString>);
+    QString dialogueFinis(QString);
 
 private slots:
     void construitURL();
-    void parametreParDefaut();
 
 private:
     QString urlChoixCouples ;

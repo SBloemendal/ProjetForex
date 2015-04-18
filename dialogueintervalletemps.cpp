@@ -1,5 +1,4 @@
 #include "dialogueintervalletemps.h"
-
 #include <QVBoxLayout>
 #include <QSqlQueryModel>
 #include <QComboBox>

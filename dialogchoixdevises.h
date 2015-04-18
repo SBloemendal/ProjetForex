@@ -1,3 +1,12 @@
+/**
+ * \file dialogchoixdevises.h
+ * \author Simon
+ * \version 1.0
+ * \date 2015-04-27
+ * \brief Classe pour afficher la fenetre de choix d'affichage des couples de devises
+ */
+
+
 #ifndef DIALOGCHOIXDEVISES_H
 #define DIALOGCHOIXDEVISES_H
 
@@ -6,6 +15,7 @@
 
 class QLineEdit ;
 class QCheckBox ;
+
 
 class dialogChoixDevises : public QDialog
 {

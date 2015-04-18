@@ -1,6 +1,7 @@
 #include "dialoguetransactionautomatique.h"
 #include <QWebView>
 
+
 DialogueTransactionAutomatique::DialogueTransactionAutomatique()
 {
     setWindowTitle("Transactions automatiques");
@@ -13,6 +14,6 @@ DialogueTransactionAutomatique::DialogueTransactionAutomatique()
 
 DialogueTransactionAutomatique::~DialogueTransactionAutomatique()
 {
-    delete graph ;
+
 }
 

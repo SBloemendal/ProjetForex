@@ -1,3 +1,12 @@
+/**
+ * \file dialogueintervalletemps.h
+ * \author Simon
+ * \version 1.0
+ * \date 2015-04-27
+ * \brief Classe pour afficher la fenetre d'affichage d'un intervalle de temps
+ */
+
+
 #ifndef DIALOGUEINTERVALLETEMPS_H
 #define DIALOGUEINTERVALLETEMPS_H
 
@@ -9,6 +18,7 @@ class QTableView ;
 class QComboBox ;
 class QLineEdit ;
 class QDateEdit ;
+
 
 class DialogueIntervalleTemps : public QDialog
 {

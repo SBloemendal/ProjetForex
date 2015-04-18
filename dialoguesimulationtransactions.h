@@ -1,3 +1,12 @@
+/**
+ * \file dialoguesimulationtransactions.h
+ * \author Simon
+ * \version 1.0
+ * \date 2015-04-27
+ * \brief Classe pour afficher la fenetre de simulation de transaction
+ */
+
+
 #ifndef DIALOGUESIMULATIONTRANSACTIONS_H
 #define DIALOGUESIMULATIONTRANSACTIONS_H
 
@@ -6,6 +15,7 @@
 class QComboBox ;
 class QLabel ;
 class QLineEdit;
+
 
 class DialogueSimulationTransactions : public QDialog
 {

@@ -1,3 +1,12 @@
+/**
+ * \file principal.h
+ * \author Simon
+ * \version 1.0
+ * \date 2015-04-27
+ * \brief Fenetre principale de l'application.
+ */
+
+
 #ifndef PRINCIPAL_H
 #define PRINCIPAL_H
 
@@ -13,10 +22,6 @@ class QSqlQueryModel ;
 class QTableView ;
 
 
-/** \brief fichier h de la classe principal
- * \author Simon
- */
-
 class principal : public QMainWindow
 {
     Q_OBJECT
@@ -30,7 +35,7 @@ public slots:
     void recupereDonnees() ;
 
 private slots:
-    void setUrlChoixDevises(QString url, QList<QString> liste) { urlChoixDevises = url ; listeCouples = liste ; }
+    void setUrlChoixDevises(QString url) { urlChoixDevises = url ; }
     void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
     void connexionHttp() ;
     void choixCoupleDevises() ;
@@ -54,7 +59,6 @@ private:
     QString loginBdd ;
     QString passwordBdd ;
     QString urlForex ;
-    QList<QString> listeCouples ;
 };
 
 bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map );

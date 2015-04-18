@@ -5,7 +5,6 @@
 #include "dialogueintervalletemps.h"
 #include "dialoguesimulationtransactions.h"
 #include "dialoguetransactionautomatique.h"
-
 #include <QWebElement>
 #include <QtSql/QSqlQuery>
 #include <QSqlQueryModel>
@@ -19,16 +18,12 @@
 #include <QHeaderView>
 #include <QXmlStreamReader>
 
-
-/**
- * \file principal.cpp
- * \author Simon
- * \version 1.6
- * \date 2015-04-13
- * \brief Classe principale qui affiche la fenetre principale dans laquelle est affichee la liste des valeurs en temps reel.
- * \todo ameliorer la boucle de recuperation des donnes html, utiliser un tableau[i]
+/** Affiche une vue des valeurs les plus récentes des couples de devises sélectionnés,
+ * et un graphique de l'évolution d'un couple de devises sélectionné.
+ * A l'initialisation, crée une base de donnée SQLite, envoie une requète HTTP au site du Forex,
+ * récupère les infos dans la réponse du Forex et les stocke dans la base de donnée pour les afficher
+ * dans l'affichage principale.
  */
-
 principal::principal()
 {
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
@@ -42,7 +37,7 @@ principal::principal()
     nomBdd = settings.value("choixDevises/nomBdd", "bddForex.db").toString() ;
     loginBdd = settings.value("choixDevises/loginBdd", "admin").toString() ;
     passwordBdd = settings.value("choixDevises/passwordBdd", "admin").toString() ;
-    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.investing.com").toString() ; //http://fxrates.fr.forexprostools.com
+    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.investing.com").toString() ; //http://fxrates.fr.forexprostools.com pour le site francais
 
     // On crée la base de donnée et le modèle qui y sera attaché, le modèle graphique, et on initialise un webview
     creerBdd() ;
@@ -100,7 +95,11 @@ principal::principal()
     setCentralWidget(zoneCentrale);
 }
 
-// Selection du couple de devises a afficher dans le graphique de la fenetre principale
+/** Selection du couple de devises a afficher
+ * dans le graphique de la fenetre principale.
+ * On récupère l'index de la ligne cliquée par
+ * l'utilisateur pour savoir quel couple afficher.
+ */
 void principal::requeteGraph(QModelIndex index)
 {
     int choix ;
@@ -130,22 +129,25 @@ void principal::requeteGraph(QModelIndex index)
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=" + QString::number(choix) + "&timescale=300&candles=50&style=line")) ;
 }
 
-// Ouvre une fenetre 'Transaction automatique'
+/** Ouvre une fenetre 'Transaction automatique'
+ */
 void principal::transactionAuto()
 {
     DialogueTransactionAutomatique* transaction = new DialogueTransactionAutomatique ;
     transaction->exec();
 }
 
-// Ouvre une fenetre 'Options systeme'
+/** Ouvre une fenetre 'Options systeme'
+ */
 void principal::options()
 {
     DialogueOptions* options = new DialogueOptions ;
-    connect(options, SIGNAL(dialogueFinis(QString,QList<QString>)), this, SLOT(setUrlChoixDevises(QString,QList<QString>))); // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlChoixDevise
+    connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString))); // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlChoixDevise
     options->exec();
 }
 
-// Ouvre la fenetre d'option 'Choix d'affichage des couples de devises'
+/** Ouvre la fenetre d'option 'Choix d'affichage des couples de devises'
+ */
 void principal::choixCoupleDevises()
 {
     dialogChoixDevises* choix = new dialogChoixDevises;
@@ -154,26 +156,34 @@ void principal::choixCoupleDevises()
     rafraichitSQLQueryModel(); // Et on reactualise le modele avec les nouveaux choix
 }
 
-// Ouvre une fenetre de dialogue 'simulation de transaction'
+
+/** Ouvre une fenetre de dialogue 'simulation de transaction'
+ */
 void principal::simulationTransaction()
 {
     DialogueSimulationTransactions* simulation = new DialogueSimulationTransactions;
     simulation->exec();
 }
 
-// Ouvre une fenetre de dialogue 'Choix d'intervalle de temps'
+
+/** Ouvre une fenetre de dialogue 'Choix d'intervalle de temps'
+ */
 void principal::intervalleTemps()
 {
     DialogueIntervalleTemps* fenetreIntervalTemps = new DialogueIntervalleTemps ;
     fenetreIntervalTemps->exec();
 }
 
+
+/** Envoi de la requette HTTP
+ * Initialisation du webview avec la requete http
+ * la variable 'urlForex' contient l'adresse du site saisie par l'utilisateur,
+ * définie dans 'DialogueOptions'.
+ * la variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
+ * définie dans 'DialogueChoixDevises'.
+ */
 void principal::connexionHttp()
 {
-    // Initialisation du webview avec la requete http
-    // la variable 'urlForex' contient l'adresse du site saisie par l'utilisateur
-    // la variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options
-
     QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
     url += urlChoixDevises;
     url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
@@ -181,13 +191,23 @@ void principal::connexionHttp()
     webView->close();
 }
 
+
+/** Fonction pour recuperer les données de la requete HTTP
+ * Pour chaque couple de devises, on crée un objet 'CoupleDevise'
+ * et on y stocke les valeurs récupéré du web service.
+ * On accède aux valeurs par le biais des CSSselector grace à un QWebElement
+ */
 void principal::recupereDonnees()
 {
-    // Pour chaque couple de devises, on crée un objet 'CoupleDevise' et on y stocke les valeurs récupéré du web service
-    // On accède aux valeurs par le biais des CSSselector grace à un QWebElement
-
     QWebElement element ;
 
+    // On parse 'urlChoixDevises' pour savoir sur quel couple de devises il faut boucler
+    QStringList listeCouples ;
+    listeCouples = urlChoixDevises.split(";");
+    listeCouples.removeLast();
+    listeCouples.replaceInStrings(" ", "");
+
+    // Boucle pour recuperer les valeurs pour chaque couple de devises
     foreach (QString index, listeCouples) {
         CoupleDevise couple ;
         element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + " span.ftqa11bb") ; // CSSselector pour le nom du couple de devises
@@ -204,41 +224,48 @@ void principal::recupereDonnees()
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
     }
-
+    // On rafraichit le modele du TableView
     rafraichitSQLQueryModel();
 }
 
 
-// On rafraichit le QSqlQuery
+/** Rafraichit le QSqlQuery pour appliquer les parametres
+ * contenue dans 'urlFiltreDevises'.
+ */
 void principal::rafraichitSQLQueryModel()
 {
     urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom" ;
     modeleQ->setQuery(urlPourModele) ;
 }
 
+
+/** Création de la base de donnée
+ */
 bool principal::creerBdd()
 {
     db = QSqlDatabase::addDatabase( "QSQLITE") ;
-    //db.setHostName(serveur);          //initialisation du serveur : non utilisé avec SQLite
-    db.setDatabaseName("./" + nomBdd);  //initialisation du nom de la base de donnée
-    //db.setUserName(loginBdd);         //initialisation du login : non utilisé avec SQLite
-    //db.setPassword(passwordBdd);      //initialisation du password : non utilisé avec SQLite
+    //db.setHostName(serveur);          // initialisation du serveur : non utilisé avec SQLite
+    db.setDatabaseName("./" + nomBdd);  // initialisation du nom de la base de donnée
+    //db.setUserName(loginBdd);         // initialisation du login : non utilisé avec SQLite
+    //db.setPassword(passwordBdd);      // initialisation du password : non utilisé avec SQLite
 
-    if (db.open()){                                         // Test si on a pu se connecter à la BDD
+    if (db.open()){                                  /// Test si on a pu se connecter à la BDD
         qDebug() << "Connecté à la base de donnée" ;
-        if (!db.tables().contains("COTATION")){             // Si la table COTATION n'existe pas, on la crée
+        if (!db.tables().contains("COTATION")){      /// Si la table COTATION n'existe pas, on la crée
             QString requeteSQL ;
             requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date)";
             db.exec(requeteSQL) ;
             return true ;
         } else return true ;
     } else {
-        qDebug() << "Pas de connexion à la base de donnée" ;
+        qWarning() << "Pas de connexion à la base de donnée" ;
         return false ;
     }
 }
 
 
+/** Permet a QSettings de lire un fichier XML
+ */
 bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
   QXmlStreamReader xmlReader(&device);
   QStringList elements;
@@ -271,7 +298,7 @@ bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
     }
   }
 
-  // Bei Fehler Warnung ausgeben
+  // Affiche un warning si erreur
   if (xmlReader.hasError()) {
     qWarning() << xmlReader.errorString();
     return false;
@@ -280,6 +307,9 @@ bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
   return true;
 }
 
+
+/** Permet a QSettings d'ecrire dans un fichier XML
+ */
 bool writeXmlFile(QIODevice &device, const QSettings::SettingsMap &map) {
   QXmlStreamWriter xmlWriter(&device);
 

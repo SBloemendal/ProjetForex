@@ -1,5 +1,4 @@
 #include "dialoguesimulationtransactions.h"
-
 #include <QSqlQueryModel>
 #include <QComboBox>
 #include <QLabel>
@@ -37,12 +36,14 @@ DialogueSimulationTransactions::DialogueSimulationTransactions()
 
 }
 
+
 DialogueSimulationTransactions::~DialogueSimulationTransactions()
 {
 
 }
 
-void DialogueSimulationTransactions::selectionChange()  // Remplacer la , par un . quelque soit son emplacement
+
+void DialogueSimulationTransactions::selectionChange()
 {
     QSqlQueryModel* modeleCalcul = new QSqlQueryModel;
     modeleCalcul->setQuery("SELECT achat, vente FROM COTATION WHERE nom='" + selection->currentText() + "'") ;

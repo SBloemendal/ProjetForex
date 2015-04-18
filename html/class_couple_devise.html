@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>Mon projet: CoupleDevise Class Reference</title>
+<title>My Project: CoupleDevise Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">Mon projet
+   <div id="projectname">My Project
    </div>
   </td>
  </tr>
@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -64,6 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
       <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -90,19 +90,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">CoupleDevise Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for CoupleDevise:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="class_couple_devise.png" usemap="#CoupleDevise_map" alt=""/>
-  <map id="CoupleDevise_map" name="CoupleDevise_map">
-</map>
- </div></div>
+
+<p>Inherits QObject.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a36b9932554e7460d6af34982a4400ec6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36b9932554e7460d6af34982a4400ec6"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>save</b> (QSqlDatabase *db)</td></tr>
+<tr class="memitem:a36b9932554e7460d6af34982a4400ec6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_couple_devise.html#a36b9932554e7460d6af34982a4400ec6">save</a> (QSqlDatabase *db)</td></tr>
 <tr class="separator:a36b9932554e7460d6af34982a4400ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -111,6 +104,24 @@ Friends</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>principal::recupereDonnees</b> ()</td></tr>
 <tr class="separator:a5a2bc1180f78198eaca770e31c8d4a25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a36b9932554e7460d6af34982a4400ec6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CoupleDevise::save </td>
+          <td>(</td>
+          <td class="paramtype">QSqlDatabase *&#160;</td>
+          <td class="paramname"><em>db</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Insere les valeurs de tous les attributs dans la base de donnée créée dans la classe 'principal'. La méthode vérifie si les valeurs 'achat' et 'vente' récupérées ont changé depuis le dernier enregistrement de la base de donnée, et crée un nouvel enregistrement uniquement si il y a eu changement. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="coupledevise_8h_source.html">coupledevise.h</a></li>
 <li>coupledevise.cpp</li>
@@ -118,7 +129,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>principal::recupereDo
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Apr 13 2015 09:41:54 for Mon projet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Apr 18 2015 20:19:22 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
