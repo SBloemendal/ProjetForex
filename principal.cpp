@@ -18,6 +18,8 @@
 #include <QHeaderView>
 #include <QXmlStreamReader>
 
+#include <QGraphicsEffect>
+
 /** Affiche une vue des valeurs les plus récentes des couples de devises sélectionnés,
  * et un graphique de l'évolution d'un couple de devises sélectionné.
  * A l'initialisation, crée une base de donnée SQLite, envoie une requète HTTP au site du Forex,
@@ -56,9 +58,13 @@ principal::principal()
 
 
     // Design de la fenêtre principale
+
+
+
     QWidget *zoneCentrale = new QWidget;
 
-    setGeometry(400, 200, 1400, 580);
+    setFixedHeight(580);
+    setFixedWidth(1400);
 
     QMenuBar* barreDeMenu = menuBar() ;
     QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
@@ -74,14 +80,13 @@ principal::principal()
 
     tableView = new QTableView(this);
     tableView->setModel(modeleQ);
-    tableView->setAlternatingRowColors(true);
     tableView->verticalHeader()->hide();
     tableView->setShowGrid(false);
     tableView->verticalHeader()->setDefaultSectionSize(20);
     tableView->horizontalHeader()->setDefaultSectionSize(90);
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->setSortingEnabled(true);
-    tableView->selectionModel()->currentIndex().row();
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     connect (tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(requeteGraph(QModelIndex))) ;
 
     graph = new QWebView ;
@@ -93,6 +98,19 @@ principal::principal()
     zoneCentrale->setLayout(layout);
 
     setCentralWidget(zoneCentrale);
+
+    QGraphicsOpacityEffect* effetTransparent = new QGraphicsOpacityEffect;
+    effetTransparent->setOpacity(0.85);
+    QGraphicsDropShadowEffect * dse = new QGraphicsDropShadowEffect();
+    dse->setBlurRadius(10);
+
+    qApp->setStyleSheet("QMainWindow { background-image: url(Uk-Forex1.png); }");
+    tableView->setStyleSheet("background-color: transparent");
+    tableView->horizontalHeader()->setStyleSheet("background-color: transparent");
+    tableView->horizontalHeader()->setGraphicsEffect(dse);
+    tableView->setGraphicsEffect(dse);
+    graph->setStyleSheet("background-color: transparent");
+    graph->setGraphicsEffect(effetTransparent);
 }
 
 /** Selection du couple de devises a afficher
