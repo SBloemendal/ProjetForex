@@ -16,7 +16,7 @@
 
 class QLineEdit ;
 class QCheckBox ;
-
+class QComboBox ;
 
 class DialogueOptions : public QDialog
 {
@@ -39,6 +39,7 @@ private:
     QLineEdit* loginBdd ;
     QLineEdit* passwordBdd ;
     QLineEdit* urlForex ;
+    QComboBox* repeteTimer ;
     QCheckBox* cb1;
     QCheckBox* cb2;
     QCheckBox* cb3;

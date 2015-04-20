@@ -59,6 +59,7 @@ private:
     QString loginBdd ;
     QString passwordBdd ;
     QString urlForex ;
+    int delaiTimer ;
 };
 
 bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map );

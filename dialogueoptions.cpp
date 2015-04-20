@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QComboBox>
 
 
 DialogueOptions::DialogueOptions()
@@ -29,6 +30,12 @@ DialogueOptions::DialogueOptions()
     loginBdd = new QLineEdit(settings.value("loginBdd", "admin").toString());
     passwordBdd = new QLineEdit(settings.value("passwordBdd", "admin").toString());
     urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.investing.com").toString()); //http://fxrates.fr.forexprostools.com
+    repeteTimer = new QComboBox;
+    repeteTimer->insertItem(0,"5 secondes");
+    repeteTimer->insertItem(1,"10 secondes");
+    repeteTimer->insertItem(2,"30 secondes");
+    repeteTimer->insertItem(3,"60 secondes");
+    repeteTimer->setCurrentIndex(settings.value("indexTimer", 3).toInt());
     QLabel* infoBdd = new QLabel(this);
     infoBdd->setText("Les modifications des paramètres de la base de donnée\nseront pris en compte à la prochaine execution de l'application.");
 
@@ -37,6 +44,7 @@ DialogueOptions::DialogueOptions()
     groupBoxBddLayout->addRow("&Identifiant :", loginBdd) ;
     groupBoxBddLayout->addRow("&Mot de passe :", passwordBdd) ;
     groupBoxBddLayout->addRow("Site &Forex :", urlForex) ;
+    groupBoxBddLayout->addRow("Timer", repeteTimer);
     groupBoxBddLayout->addRow(infoBdd);
     groupBoxBdd->setLayout(groupBoxBddLayout);
 
@@ -139,6 +147,24 @@ void DialogueOptions::construitURL()
     if (cb10->isChecked())
         urlChoixCouples += "13;";
 
+    int timer;
+    switch (repeteTimer->currentIndex())
+    {
+    case 0:
+        timer = 5000;
+        break;
+    case 1:
+        timer = 10000;
+        break;
+    case 2:
+        timer = 30000;
+        break;
+    case 3:
+    default:
+        timer = 60000;
+        break;
+    }
+
     settings.beginGroup("choixDevises");
     settings.setValue("cb1", cb1->isChecked());
     settings.setValue("cb2", cb2->isChecked());
@@ -156,6 +182,8 @@ void DialogueOptions::construitURL()
     settings.setValue("loginBdd", loginBdd->text());
     settings.setValue("passwordBdd", passwordBdd->text());
     settings.setValue("urlForex", urlForex->text());
+    settings.setValue("indexTimer", repeteTimer->currentIndex());
+    settings.setValue("timer", timer);
     settings.endGroup();
 
     emit dialogueFinis(urlChoixCouples) ;

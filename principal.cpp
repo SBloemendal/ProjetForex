@@ -17,8 +17,8 @@
 #include <QBoxLayout>
 #include <QHeaderView>
 #include <QXmlStreamReader>
-
 #include <QGraphicsEffect>
+
 
 /** Affiche une vue des valeurs les plus récentes des couples de devises sélectionnés,
  * et un graphique de l'évolution d'un couple de devises sélectionné.
@@ -40,7 +40,7 @@ principal::principal()
     loginBdd = settings.value("choixDevises/loginBdd", "admin").toString() ;
     passwordBdd = settings.value("choixDevises/passwordBdd", "admin").toString() ;
     urlForex = settings.value("choixDevises/urlForex", "http://fxrates.investing.com").toString() ; //http://fxrates.fr.forexprostools.com pour le site francais
-
+    delaiTimer = settings.value("choixDevises/timer", 10000).toInt() ;
     // On crée la base de donnée et le modèle qui y sera attaché, le modèle graphique, et on initialise un webview
     creerBdd() ;
     modeleQ = new QSqlQueryModel ;
@@ -54,7 +54,7 @@ principal::principal()
     connexionHttp();
     QTimer* timerRequete = new QTimer();
     connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-    timerRequete->start(10000);
+    timerRequete->start(delaiTimer);
 
 
     // Design de la fenêtre principale
@@ -293,11 +293,11 @@ bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
     // Nächsten Token lesen
     xmlReader.readNext();
 
-    // Wenn Token ein Startelement
+    // Quand l'objet est un StartElement
     if (xmlReader.isStartElement() && xmlReader.name() != "Settings") {
       // Element zur Liste hinzufügen
       elements.append(xmlReader.name().toString());
-    // Wenn Token ein Endelement
+    // Quand l'objet est un EndElement
     } else if (xmlReader.isEndElement()) {
       // Letztes Element löschen
       if(!elements.isEmpty()) elements.removeLast();
