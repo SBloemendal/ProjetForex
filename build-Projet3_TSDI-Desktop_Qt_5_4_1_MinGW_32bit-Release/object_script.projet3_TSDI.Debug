@@ -1,0 +1,16 @@
+INPUT(
+./debug\main.o
+./debug\principal.o
+./debug\coupledevise.o
+./debug\dialogchoixdevises.o
+./debug\dialogueoptions.o
+./debug\dialogueintervalletemps.o
+./debug\dialoguesimulationtransactions.o
+./debug\dialoguetransactionautomatique.o
+./debug\moc_principal.o
+./debug\moc_coupledevise.o
+./debug\moc_dialogchoixdevises.o
+./debug\moc_dialogueoptions.o
+./debug\moc_dialogueintervalletemps.o
+./debug\moc_dialoguesimulationtransactions.o
+);

@@ -3,15 +3,13 @@
 # Project created by QtCreator 2015-03-25T15:19:05
 #
 #-------------------------------------------------
-QT += core widgets webkitwidgets sql
+QT += widgets sql webkitwidgets
 
 
 TARGET = projet3_TSDI
-CONFIG   += console
-CONFIG   -= app_bundle
 
 TEMPLATE = app
-
+CONFIG += qt release windows
 
 SOURCES += main.cpp \
     principal.cpp \
