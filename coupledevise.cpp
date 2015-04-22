@@ -2,8 +2,9 @@
 #include <QtSql/QSqlQuery>
 #include <QDebug>
 
-
-CoupleDevise::CoupleDevise() : coupleDevise(""), valeurAchat(""), valeurVente(""), variation(""), heure("")
+/** On initialise tous les attributs à NULL à la création de l'objet.
+ */
+CoupleDevise::CoupleDevise() : coupleDevise(""), valeurAchat(""), valeurVente(""), variation("")
 {
 
 }

@@ -1,10 +1,12 @@
 #include "dialoguetransactionautomatique.h"
 #include <QWebView>
 
-
+/** Affiche une fenetre permettant de calculer automatiquement
+ * les profits possibles en temps reel
+ */
 DialogueTransactionAutomatique::DialogueTransactionAutomatique()
 {
-    setWindowTitle("Transactions automatiques");
+    setWindowTitle("Calculateur de profit");
     setFixedHeight(430);
     setFixedWidth(440);
     graph = new QWebView (this);

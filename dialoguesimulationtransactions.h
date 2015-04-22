@@ -26,6 +26,7 @@ public:
     ~DialogueSimulationTransactions();
 
 private slots:
+    /** Gere l'affichage des données en fonction du choix de l'utilisateur */
     void selectionChange();
 
 private:

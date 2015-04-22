@@ -3,7 +3,7 @@
  * \author Simon
  * \version 1.0
  * \date 2015-04-27
- * \brief Classe pour afficher la fenetre d'affichage d'un intervalle de temps
+ * \brief Classe pour afficher la fenetre d'affichage de données dans un intervalle de temps.
  */
 
 
@@ -29,6 +29,7 @@ public:
     ~DialogueIntervalleTemps();
 
 private slots:
+    /** Gere l'affichage des données en fonction du choix de l'utilisateur */
     void selectionChange();
 
 private:

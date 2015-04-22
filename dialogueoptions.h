@@ -30,7 +30,8 @@ signals:
     QString dialogueFinis(QString);
 
 private slots:
-    void construitURL();
+    /** Enregistre les valeurs choisies par l'utilisateur */
+    void enregistreValeurs();
 
 private:
     QString urlChoixCouples ;

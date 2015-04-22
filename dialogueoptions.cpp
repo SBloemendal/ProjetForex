@@ -10,18 +10,28 @@
 #include <QPushButton>
 #include <QComboBox>
 
-
+/** Affiche une fenetre proposant de modifier les options de l'application.
+ */
 DialogueOptions::DialogueOptions()
 {
+    // On crée un QSettings qui permettra d'initialiser les attributs avec les options sauvegardées
+    //
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+    settings.beginGroup("Options");
 
-    settings.beginGroup("choixDevises");
 
+    // Parametres généraux de la fenetre
+    //
     setWindowTitle("Options");
+    setFixedHeight(500);
+    setFixedWidth(400);
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;
 
+
+    //Bloc d'options 'Base de donnée'
+    //
     QGroupBox *groupBoxBdd = new QGroupBox("Paramètres de la base de données", this) ;
     QFormLayout* groupBoxBddLayout = new QFormLayout();
 
@@ -29,7 +39,7 @@ DialogueOptions::DialogueOptions()
     nomBdd = new QLineEdit(settings.value("nomBdd", "bddForex.db").toString());
     loginBdd = new QLineEdit(settings.value("loginBdd", "admin").toString());
     passwordBdd = new QLineEdit(settings.value("passwordBdd", "admin").toString());
-    urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.investing.com").toString()); //http://fxrates.fr.forexprostools.com
+    urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.investing.com").toString());
     repeteTimer = new QComboBox;
     repeteTimer->insertItem(0,"5 secondes");
     repeteTimer->insertItem(1,"10 secondes");
@@ -48,10 +58,14 @@ DialogueOptions::DialogueOptions()
     groupBoxBddLayout->addRow(infoBdd);
     groupBoxBdd->setLayout(groupBoxBddLayout);
 
+
+    // Bloc d'options 'Choix des couples à stocker'
+    //
     QGroupBox *groupBoxDevises = new QGroupBox("Données stockées", this) ;
     QVBoxLayout* layoutgroupBoxDevises = new QVBoxLayout ;
     QHBoxLayout* layoutDevises = new QHBoxLayout ;
 
+    // On divise les checkboxs en deux colonnes
     QVBoxLayout* layoutGauche = new QVBoxLayout ;
     cb1 = new QCheckBox("EUR/USD", this) ;
     cb1->setChecked(settings.value("cb1", true).toBool());
@@ -69,6 +83,7 @@ DialogueOptions::DialogueOptions()
     layoutGauche->addWidget(cb4);
     layoutGauche->addWidget(cb5);
 
+    // Deuxieme colonne de checkboxs
     QVBoxLayout* layoutDroit = new QVBoxLayout ;
     cb6 = new QCheckBox("EUR/JPY", this) ;
     cb6->setChecked(settings.value("cb6", true).toBool());
@@ -86,6 +101,7 @@ DialogueOptions::DialogueOptions()
     layoutDroit->addWidget(cb9);
     layoutDroit->addWidget(cb10);
 
+    // Label d'information
     QLabel* infoSelectionDevise = new QLabel(this);
     infoSelectionDevise->setText("Selectionner les couples de devises qui seront stockés dans la base de données.\nCeci n'affecte pas l'affichage de la fenêtre principale.\nPour modifier l'affichade de la fenêtre principale, utilisez le menu 'Affichage'");
 
@@ -95,15 +111,19 @@ DialogueOptions::DialogueOptions()
     layoutgroupBoxDevises->addWidget(infoSelectionDevise);
     groupBoxDevises->setLayout(layoutgroupBoxDevises);
 
+
+    // Bloc des boutons Valider et Annuler
+    //
     QHBoxLayout* layoutBoutons = new QHBoxLayout;
     QPushButton* annuler = new QPushButton(tr("&Annuler"));
     connect(annuler, SIGNAL(clicked()), this, SLOT(close()));
     annuler->setDefault(true);
     QPushButton* valider = new QPushButton(tr("&Valider"));
-    connect(valider, SIGNAL(clicked()), this, SLOT(construitURL()));
+    connect(valider, SIGNAL(clicked()), this, SLOT(enregistreValeurs()));
     layoutBoutons->addWidget(annuler);
     layoutBoutons->addWidget(valider);
 
+    // On met tout dans le layout principal
     layoutPrincipal->addWidget(groupBoxBdd);
     layoutPrincipal->addWidget(groupBoxDevises);
     layoutPrincipal->addLayout(layoutBoutons);
@@ -119,13 +139,17 @@ DialogueOptions::~DialogueOptions()
 
 
 
-
-void DialogueOptions::construitURL()
+/** Permet de stocker les options choisies
+ * par l'utilisateur dans le QSettings.
+ */
+void DialogueOptions::enregistreValeurs()
 {
+    // Création d'un QSettings
     const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
 
+    // Création de la partie de l'url permettant la sélection des couples à demander dans la requete HTTP
     if (cb1->isChecked())
         urlChoixCouples += "1;";
     if (cb2->isChecked())
@@ -147,6 +171,10 @@ void DialogueOptions::construitURL()
     if (cb10->isChecked())
         urlChoixCouples += "13;";
 
+    //Stockage du choix du timer
+    // Il faut stocker la valeur souhaitée
+    // et l'index du combobox pour pouvoir
+    // le réinitialiser la prochaine fois.
     int timer;
     switch (repeteTimer->currentIndex())
     {
@@ -165,7 +193,10 @@ void DialogueOptions::construitURL()
         break;
     }
 
-    settings.beginGroup("choixDevises");
+    // On enregistre l'etat de chaque parametre pour
+    // pouvoir les reinitialiser dans le meme etat
+    // la prochaine fois.
+    settings.beginGroup("Options");
     settings.setValue("cb1", cb1->isChecked());
     settings.setValue("cb2", cb2->isChecked());
     settings.setValue("cb3", cb3->isChecked());
@@ -186,6 +217,7 @@ void DialogueOptions::construitURL()
     settings.setValue("timer", timer);
     settings.endGroup();
 
+    // On envoie un signal attendue par la classe 'principal'.
     emit dialogueFinis(urlChoixCouples) ;
     this->close();
 }

@@ -28,15 +28,19 @@ class principal : public QMainWindow
 
 public:
     principal();
+
+    /** Crée une base de donnée si inexistente et s'y connecte */
     bool creerBdd() ;
+
     void rafraichitSQLQueryModel() ;
 
 public slots:
+    /** Récupère les valeurs des couples de cotations depuis la source HTML */
     void recupereDonnees() ;
 
 private slots:
-    void setUrlChoixDevises(QString url) { urlChoixDevises = url ; }
-    void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
+    inline void setUrlChoixDevises(QString url) { urlChoixDevises = url ; }
+    inline void setUrlFiltreDevises(QString url) { urlFiltreDevises = url ; }
     void connexionHttp() ;
     void choixCoupleDevises() ;
     void intervalleTemps() ;
@@ -47,6 +51,7 @@ private slots:
     void afficheGraphique();
 
 private:
+    QWidget *zoneCentrale ;
     QWebView* webView ;
     QWebView* graph ;
     QSqlQueryModel* modeleQ ;

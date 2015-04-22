@@ -1,10 +1,10 @@
-/** \brief Classe pour manipuler et enregistrer les valeurs récupérées depuis la requete HTTP.
- *
- * Cette classe permet de stocker les valeurs récupérés par la méthode 'principal::recupereDonnees()'
- * en proposant un attribut pour chaque valeur récupérée, et une méthode 'save' pour les
- * sauvegarder dans la base de donnée.
+/**
+ * \file coupledevise.h
+ * \author Simon
+ * \version 1.0
+ * \date 2015-04-27
+ * \brief Classe pour manipuler et enregistrer les valeurs récupérées depuis la requete HTTP.
  */
-
 
 #ifndef COUPLEDEVISE_H
 #define COUPLEDEVISE_H
@@ -24,6 +24,8 @@ public:
     ~CoupleDevise();
 
     friend void principal::recupereDonnees() ;
+
+    /** Permet de sauver les attributs dans la base de données */
     bool save(QSqlDatabase* db) ;
 
 private:
@@ -31,7 +33,6 @@ private:
     QString valeurAchat ;
     QString valeurVente ;
     QString variation ;
-    QString heure ;
 };
 
 #endif // COUPLEDEVISE_H

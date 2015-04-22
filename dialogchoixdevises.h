@@ -3,7 +3,7 @@
  * \author Simon
  * \version 1.0
  * \date 2015-04-27
- * \brief Classe pour afficher la fenetre de choix d'affichage des couples de devises
+ * \brief Classe pour afficher la fenetre de choix d'affichage des couples de devises.
  */
 
 
@@ -29,7 +29,8 @@ signals:
     QString dialogueFinis(QString);
 
 private slots:
-    void construitURL();
+    /** Enregistre les valeurs choisies par l'utilisateur */
+    void enregistreValeurs();
 
 private:
     QString urlChoixCouples ;

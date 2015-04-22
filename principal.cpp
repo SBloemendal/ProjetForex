@@ -19,6 +19,7 @@
 #include <QXmlStreamReader>
 #include <QGraphicsEffect>
 #include <QPushButton>
+#include <QSortFilterProxyModel>
 
 
 /** Affiche une vue des valeurs les plus récentes des couples de devises sélectionnés,
@@ -29,29 +30,41 @@
  */
 principal::principal()
 {
+    // On crée un QSettings
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
-    //settings.clear();
+    //settings.clear(); // Remet tous les paramètres à leur valeur par défaut
 
+    // Initialisation des attributs avec le QSettings
+    //
     urlFiltreDevises = settings.value("afficherDevises/urlchoixCouples", "WHERE jour=date('now')").toString() ;
-    urlChoixDevises = settings.value("choixDevises/urlChoixCouples", "1; 2; 3; 4; 6; 9; 10; 11; 12; 13;").toString() ;
-    serveur = settings.value("choixDevises/serveur", "127.0.0.1").toString();
-    nomBdd = settings.value("choixDevises/nomBdd", "bddForex.db").toString() ;
-    loginBdd = settings.value("choixDevises/loginBdd", "admin").toString() ;
-    passwordBdd = settings.value("choixDevises/passwordBdd", "admin").toString() ;
-    urlForex = settings.value("choixDevises/urlForex", "http://fxrates.investing.com").toString() ; //http://fxrates.fr.forexprostools.com pour le site francais
-    delaiTimer = settings.value("choixDevises/timer", 10000).toInt() ;
-    // On crée la base de donnée et le modèle qui y sera attaché, le modèle graphique, et on initialise un webview
+    urlChoixDevises = settings.value("Options/urlChoixCouples", "1; 2; 3; 4; 6; 9; 10; 11; 12; 13;").toString() ;
+    serveur = settings.value("Options/serveur", "127.0.0.1").toString();
+    nomBdd = settings.value("Options/nomBdd", "bddForex.db").toString() ;
+    loginBdd = settings.value("Options/loginBdd", "admin").toString() ;
+    passwordBdd = settings.value("Options/passwordBdd", "admin").toString() ;
+    urlForex = settings.value("Options/urlForex", "http://fxrates.investing.com").toString() ; //http://fxrates.fr.forexprostools.com pour le site francais
+    delaiTimer = settings.value("Options/timer", 10000).toInt() ;
+
+    // On crée la base de donnée et le modèle qui la lira,
+    // on crée aussi un modele de filtre qui sera placé entre le modele
+    // et la vue.
+    // Et on initialise un webview qui enverra la requete HTTP
+    //
     creerBdd() ;
     modeleQ = new QSqlQueryModel ;
+    QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel;
+    proxyModel->setSourceModel( modeleQ );
     rafraichitSQLQueryModel();
 
     webView = new QWebView(this);
     webView->hide();
     connect (webView, SIGNAL(loadFinished(bool)), this, SLOT(recupereDonnees())) ;
 
-    // On lance la requete http et on lance le timer pour répéter la requete à intervalle régulier
+    // On lance la requete http et on lance le timer
+    // pour répéter la requete à intervalle régulier
+    //
     connexionHttp();
     QTimer* timerRequete = new QTimer();
     connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
@@ -59,8 +72,10 @@ principal::principal()
 
 
     // Design de la fenêtre principale
-    QWidget *zoneCentrale = new QWidget;
+    //
+    zoneCentrale = new QWidget;
 
+    // Barre de menu
     QMenuBar* barreDeMenu = menuBar() ;
     QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
     QMenu* menuDevises = barreDeMenu->addMenu("Affichage") ;
@@ -72,14 +87,13 @@ principal::principal()
     menuDevises->addAction("Simulation de transactions", this, SLOT(simulationTransaction())) ;
     menuDevises->addAction("Transactions automatiques", this, SLOT(transactionAuto())) ;
 
-    QHBoxLayout* layout = new QHBoxLayout;
-    setMinimumSize(500,400);
-    setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-
+    // Le tableview qui affichera les cotations en temps réel
     tableView = new QTableView(this);
-    tableView->setModel(modeleQ);
+    tableView->setModel(proxyModel);
     tableView->verticalHeader()->hide();
     tableView->setShowGrid(false);
+    tableView->setSortingEnabled(true);
+    tableView->sortByColumn(0, Qt::AscendingOrder);
     tableView->verticalHeader()->setDefaultSectionSize(20);
     tableView->horizontalHeader()->setDefaultSectionSize(80);
     tableView->horizontalHeader()->setStretchLastSection(true);
@@ -87,12 +101,13 @@ principal::principal()
     tableView->setMinimumSize(500,400);
     connect (tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(requeteGraph(QModelIndex))) ;
 
+    // Le graphique de courbes qui affichera les valeurs du couple de devises sélectionné.
     graph = new QWebView ;
     graph->hide();
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=1&timescale=300&candles=50&style=line"));
     graph->setMinimumSize(500,400);
 
-    QHBoxLayout* layoutBoutons = new QHBoxLayout;
+    // Les boutons permettant d'accéder aux différentes fonctions de l'application
     QPushButton* boutonGraph = new QPushButton("Graphique");
     connect (boutonGraph, SIGNAL(clicked()), this, SLOT(afficheGraphique()));
     QPushButton* boutonInterval = new QPushButton("Intervalle");
@@ -101,11 +116,13 @@ principal::principal()
     connect (boutonSimulation, SIGNAL(clicked()), this, SLOT(simulationTransaction()));
     QPushButton* boutonTransaction = new QPushButton("Transaction");
     connect (boutonTransaction, SIGNAL(clicked()), this, SLOT(transactionAuto()));
+
+    // On place le tout dans des layouts
+    QHBoxLayout* layoutBoutons = new QHBoxLayout;
     layoutBoutons->addWidget(boutonGraph);
     layoutBoutons->addWidget(boutonInterval);
     layoutBoutons->addWidget(boutonSimulation);
     layoutBoutons->addWidget(boutonTransaction);
-
     QVBoxLayout* layoutGauche = new QVBoxLayout;
     layoutGauche->addWidget(tableView);
     layoutGauche->addLayout(layoutBoutons);
@@ -113,19 +130,19 @@ principal::principal()
     QVBoxLayout* layoutDroit = new QVBoxLayout;
     layoutDroit->addWidget(graph);
     layoutDroit->addStretch();
+    QHBoxLayout* layout = new QHBoxLayout;
     layout->addLayout(layoutGauche);
     layout->addLayout(layoutDroit);
-    layout->addStretch();
+    layout->addStretch(1);
     zoneCentrale->setLayout(layout);
-
     setCentralWidget(zoneCentrale);
 
+    // Et on rajoute quelques effets graphiques
     QGraphicsOpacityEffect* effetTransparent = new QGraphicsOpacityEffect;
     effetTransparent->setOpacity(0.85);
     QGraphicsDropShadowEffect * dse = new QGraphicsDropShadowEffect();
     dse->setBlurRadius(10);
     dse->setOffset(4);
-
     qApp->setStyleSheet("QMainWindow { background-image: url(Uk-Forex1.png); }");
     tableView->setStyleSheet("background-color: transparent");
     tableView->setGraphicsEffect(dse);
@@ -133,13 +150,23 @@ principal::principal()
     graph->setGraphicsEffect(effetTransparent);
 }
 
+
+
+/** Permet d'afficher ou de masquer
+ * le graphique de courbes
+ * dans la fenêtre principale
+ */
 void principal::afficheGraphique()
 {
-    if (graph->isVisible()) graph->hide();
-    else graph->show();
-    //adjustSize();
-    updateGeometry();
+    if (graph->isVisible())
+    {
+        graph->hide();
+        zoneCentrale->resize(500,400);
+        this->adjustSize();
+    } else graph->show();
 }
+
+
 
 /** Selection du couple de devises a afficher
  * dans le graphique de la fenetre principale.
@@ -151,6 +178,9 @@ void principal::requeteGraph(QModelIndex index)
     int choix ;
     int row = index.row();
 
+    // On récupère la valeur de la 1ere case de la ligne cliquée
+    // pour savoir quelle couple de devises il faut afficher
+    // dans le graphique de courbes.
     if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "EUR/USD")
             choix = 1 ;
     if (index.sibling(row,0).data(Qt::DisplayRole).toString() == "GBP/USD")
@@ -175,6 +205,8 @@ void principal::requeteGraph(QModelIndex index)
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=" + QString::number(choix) + "&timescale=300&candles=50&style=line")) ;
 }
 
+
+
 /** Ouvre une fenetre 'Transaction automatique'
  */
 void principal::transactionAuto()
@@ -183,24 +215,32 @@ void principal::transactionAuto()
     transaction->exec();
 }
 
+
+
 /** Ouvre une fenetre 'Options systeme'
  */
 void principal::options()
 {
     DialogueOptions* options = new DialogueOptions ;
-    connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString))); // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlChoixDevise
+    // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlChoixDevise
+    connect(options, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlChoixDevises(QString)));
     options->exec();
 }
+
+
 
 /** Ouvre la fenetre d'option 'Choix d'affichage des couples de devises'
  */
 void principal::choixCoupleDevises()
 {
     dialogChoixDevises* choix = new dialogChoixDevises;
-    connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString))); // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlFiltreDevise
+    // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlFiltreDevise
+    connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString)));
     choix->exec();
-    rafraichitSQLQueryModel(); // Et on reactualise le modele avec les nouveaux choix
+    // Et on reactualise le modele avec les nouveaux choix
+    rafraichitSQLQueryModel();
 }
+
 
 
 /** Ouvre une fenetre de dialogue 'simulation de transaction'
@@ -212,6 +252,7 @@ void principal::simulationTransaction()
 }
 
 
+
 /** Ouvre une fenetre de dialogue 'Choix d'intervalle de temps'
  */
 void principal::intervalleTemps()
@@ -221,12 +262,12 @@ void principal::intervalleTemps()
 }
 
 
-/** Envoi de la requette HTTP
- * Initialisation du webview avec la requete http
- * la variable 'urlForex' contient l'adresse du site saisie par l'utilisateur,
+
+/** Envoi de la requette HTTP par l'intermédiaire du QWebView.
+ * La variable 'urlForex' contient l'adresse du site saisie par l'utilisateur,
  * définie dans 'DialogueOptions'.
- * la variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
- * définie dans 'DialogueChoixDevises'.
+ * La variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
+ * définie dans 'DialogueOptions'.
  */
 void principal::connexionHttp()
 {
@@ -264,8 +305,6 @@ void principal::recupereDonnees()
         couple.valeurVente = element.toPlainText() ;
         element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=pcp]") ; // CSSselector pour le pourcentage de variation de la cotation
         couple.variation = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=time]") ; // CSSselector pour l'heure de la cotation
-        couple.heure = element.toPlainText() ;
 
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
@@ -275,12 +314,13 @@ void principal::recupereDonnees()
 }
 
 
+
 /** Rafraichit le QSqlQuery pour appliquer les parametres
- * contenue dans 'urlFiltreDevises'.
+ * contenue dans 'urlFiltreDevises' définie dans 'DialogueChoixDevises'.
  */
 void principal::rafraichitSQLQueryModel()
 {
-    urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom ORDER BY nom" ;
+    urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom" ;
     modeleQ->setQuery(urlPourModele) ;
 }
 
@@ -295,9 +335,9 @@ bool principal::creerBdd()
     //db.setUserName(loginBdd);         // initialisation du login : non utilisé avec SQLite
     //db.setPassword(passwordBdd);      // initialisation du password : non utilisé avec SQLite
 
-    if (db.open()){                                  /// Test si on a pu se connecter à la BDD
+    if (db.open()){                                  // Test si on a pu se connecter à la BDD
         qDebug() << "Connecté à la base de donnée" ;
-        if (!db.tables().contains("COTATION")){      /// Si la table COTATION n'existe pas, on la crée
+        if (!db.tables().contains("COTATION")){      // Si la table COTATION n'existe pas, on la crée
             QString requeteSQL ;
             requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date)";
             db.exec(requeteSQL) ;
@@ -316,30 +356,30 @@ bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
   QXmlStreamReader xmlReader(&device);
   QStringList elements;
 
-  // Solange Ende nicht erreicht und kein Fehler aufgetreten ist
+  // Tant que la fin ne est pas atteint et aucune erreur ne se est produite
   while (!xmlReader.atEnd() && !xmlReader.hasError()) {
-    // Nächsten Token lesen
+    // Lire le jeton suivant
     xmlReader.readNext();
 
     // Quand l'objet est un StartElement
     if (xmlReader.isStartElement() && xmlReader.name() != "Settings") {
-      // Element zur Liste hinzufügen
+      // Ajouter un article à la liste
       elements.append(xmlReader.name().toString());
     // Quand l'objet est un EndElement
     } else if (xmlReader.isEndElement()) {
-      // Letztes Element löschen
+      // Pour supprimer le dernier élément
       if(!elements.isEmpty()) elements.removeLast();
-    // Wenn Token einen Wert enthält
+    // Si jeton contient une valeur
     } else if (xmlReader.isCharacters() && !xmlReader.isWhitespace()) {
       QString key;
 
-      // Elemente zu String hinzufügen
+      // Ajouter des éléments à string
       for(int i = 0; i < elements.size(); i++) {
         if(i != 0) key += "/";
         key += elements.at(i);
       }
 
-      // Wert in Map eintragen
+      // Entrer la valeur map
       map[key] = xmlReader.text().toString();
     }
   }
@@ -366,34 +406,34 @@ bool writeXmlFile(QIODevice &device, const QSettings::SettingsMap &map) {
   QStringList prev_elements;
   QSettings::SettingsMap::ConstIterator map_i;
 
-  // Alle Elemente der Map durchlaufen
+  // Grâce à tous les éléments de la carte
   for (map_i = map.begin(); map_i != map.end(); map_i++) {
 
     QStringList elements = map_i.key().split("/");
 
     int x = 0;
-    // Zu schließende Elemente ermitteln
+    // Pour déterminer les éléments de fermeture
     while(x < prev_elements.size() && elements.at(x) == prev_elements.at(x)) {
       x++;
     }
 
-    // Elemente schließen
+    // Fermer Articles
     for(int i = prev_elements.size() - 1; i >= x; i--) {
       xmlWriter.writeEndElement();
     }
 
-    // Elemente öffnen
+    // Ouvrir Tous les documents
     for (int i = x; i < elements.size(); i++) {
       xmlWriter.writeStartElement(elements.at(i));
     }
 
-    // Wert eintragen
+    // entrer la valeur
     xmlWriter.writeCharacters(map_i.value().toString());
 
     prev_elements = elements;
   }
 
-  // Noch offene Elemente schließen
+  // Fermer éléments exceptionnels
   for(int i = 0; i < prev_elements.size(); i++) {
     xmlWriter.writeEndElement();
   }
