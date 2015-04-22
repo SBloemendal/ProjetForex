@@ -59,9 +59,6 @@ principal::principal()
 
 
     // Design de la fenêtre principale
-
-
-
     QWidget *zoneCentrale = new QWidget;
 
     QMenuBar* barreDeMenu = menuBar() ;
@@ -76,13 +73,15 @@ principal::principal()
     menuDevises->addAction("Transactions automatiques", this, SLOT(transactionAuto())) ;
 
     QHBoxLayout* layout = new QHBoxLayout;
+    setMinimumSize(500,400);
+    setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
 
     tableView = new QTableView(this);
     tableView->setModel(modeleQ);
     tableView->verticalHeader()->hide();
     tableView->setShowGrid(false);
     tableView->verticalHeader()->setDefaultSectionSize(20);
-    tableView->horizontalHeader()->setDefaultSectionSize(90);
+    tableView->horizontalHeader()->setDefaultSectionSize(80);
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableView->setMinimumSize(500,400);
@@ -138,6 +137,8 @@ void principal::afficheGraphique()
 {
     if (graph->isVisible()) graph->hide();
     else graph->show();
+    //adjustSize();
+    updateGeometry();
 }
 
 /** Selection du couple de devises a afficher
