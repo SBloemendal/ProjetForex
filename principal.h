@@ -22,12 +22,12 @@ class QSqlQueryModel ;
 class QTableView ;
 
 
-class principal : public QMainWindow
+class Principal : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    principal();
+    Principal();
 
     /** Crée une base de donnée si inexistente et s'y connecte */
     bool creerBdd() ;

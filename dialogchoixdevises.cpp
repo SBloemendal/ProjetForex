@@ -11,7 +11,7 @@
  * les couples de devises qu'il veut voir afficher dans
  * la fenetre principale
  */
-dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
+DialogueChoixDevises::DialogueChoixDevises() : urlChoixCouples("")
 {
     // On crée un QSettings qui permettra d'initialiser les attributs avec les options sauvegardées
     //
@@ -101,14 +101,14 @@ dialogChoixDevises::dialogChoixDevises() : urlChoixCouples("")
     settings.endGroup();
 }
 
-dialogChoixDevises::~dialogChoixDevises()
+DialogueChoixDevises::~DialogueChoixDevises()
 {
 
 }
 /** Methode permettant d'enregistrer les choix de l'utilisateur et de
  * modifier l'affichage de la fenetre principale en fonction
  */
-void dialogChoixDevises::enregistreValeurs()
+void DialogueChoixDevises::enregistreValeurs()
 {
     // On crée un QSettings pour stocker les valeurs
     const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);

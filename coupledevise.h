@@ -23,7 +23,7 @@ public:
     CoupleDevise();
     ~CoupleDevise();
 
-    friend void principal::recupereDonnees() ;
+    friend void Principal::recupereDonnees() ;
 
     /** Permet de sauver les attributs dans la base de données */
     bool save(QSqlDatabase* db) ;

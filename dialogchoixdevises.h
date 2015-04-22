@@ -7,8 +7,8 @@
  */
 
 
-#ifndef DIALOGCHOIXDEVISES_H
-#define DIALOGCHOIXDEVISES_H
+#ifndef DIALOGUECHOIXDEVISES_H
+#define DIALOGUECHOIXDEVISES_H
 
 #include "principal.h"
 #include <QDialog>
@@ -17,13 +17,13 @@ class QLineEdit ;
 class QCheckBox ;
 
 
-class dialogChoixDevises : public QDialog
+class DialogueChoixDevises : public QDialog
 {
     Q_OBJECT
 
 public:
-    dialogChoixDevises();
-    ~dialogChoixDevises();
+    DialogueChoixDevises();
+    ~DialogueChoixDevises();
 
 signals:
     QString dialogueFinis(QString);
@@ -51,4 +51,4 @@ private:
     QCheckBox* cb10;
 };
 
-#endif // DIALOGCHOIXDEVISES_H
+#endif // DIALOGUECHOIXDEVISES_H

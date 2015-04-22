@@ -28,7 +28,7 @@
  * récupère les infos dans la réponse du Forex et les stocke dans la base de donnée pour les afficher
  * dans l'affichage principale.
  */
-principal::principal()
+Principal::Principal()
 {
     // On crée un QSettings
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
@@ -156,7 +156,7 @@ principal::principal()
  * le graphique de courbes
  * dans la fenêtre principale
  */
-void principal::afficheGraphique()
+void Principal::afficheGraphique()
 {
     if (graph->isVisible())
     {
@@ -173,7 +173,7 @@ void principal::afficheGraphique()
  * On récupère l'index de la ligne cliquée par
  * l'utilisateur pour savoir quel couple afficher.
  */
-void principal::requeteGraph(QModelIndex index)
+void Principal::requeteGraph(QModelIndex index)
 {
     int choix ;
     int row = index.row();
@@ -209,7 +209,7 @@ void principal::requeteGraph(QModelIndex index)
 
 /** Ouvre une fenetre 'Transaction automatique'
  */
-void principal::transactionAuto()
+void Principal::transactionAuto()
 {
     DialogueTransactionAutomatique* transaction = new DialogueTransactionAutomatique ;
     transaction->exec();
@@ -219,7 +219,7 @@ void principal::transactionAuto()
 
 /** Ouvre une fenetre 'Options systeme'
  */
-void principal::options()
+void Principal::options()
 {
     DialogueOptions* options = new DialogueOptions ;
     // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlChoixDevise
@@ -231,9 +231,9 @@ void principal::options()
 
 /** Ouvre la fenetre d'option 'Choix d'affichage des couples de devises'
  */
-void principal::choixCoupleDevises()
+void Principal::choixCoupleDevises()
 {
-    dialogChoixDevises* choix = new dialogChoixDevises;
+    DialogueChoixDevises* choix = new DialogueChoixDevises;
     // Lorsque la fenetre emet ce signal, on stocke les choix utilisateurs dans la variable urlFiltreDevise
     connect(choix, SIGNAL(dialogueFinis(QString)), this, SLOT(setUrlFiltreDevises(QString)));
     choix->exec();
@@ -245,7 +245,7 @@ void principal::choixCoupleDevises()
 
 /** Ouvre une fenetre de dialogue 'simulation de transaction'
  */
-void principal::simulationTransaction()
+void Principal::simulationTransaction()
 {
     DialogueSimulationTransactions* simulation = new DialogueSimulationTransactions;
     simulation->exec();
@@ -255,7 +255,7 @@ void principal::simulationTransaction()
 
 /** Ouvre une fenetre de dialogue 'Choix d'intervalle de temps'
  */
-void principal::intervalleTemps()
+void Principal::intervalleTemps()
 {
     DialogueIntervalleTemps* fenetreIntervalTemps = new DialogueIntervalleTemps ;
     fenetreIntervalTemps->exec();
@@ -269,7 +269,7 @@ void principal::intervalleTemps()
  * La variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
  * définie dans 'DialogueOptions'.
  */
-void principal::connexionHttp()
+void Principal::connexionHttp()
 {
     QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
     url += urlChoixDevises;
@@ -284,7 +284,7 @@ void principal::connexionHttp()
  * et on y stocke les valeurs récupéré du web service.
  * On accède aux valeurs par le biais des CSSselector grace à un QWebElement
  */
-void principal::recupereDonnees()
+void Principal::recupereDonnees()
 {
     QWebElement element ;
 
@@ -318,7 +318,7 @@ void principal::recupereDonnees()
 /** Rafraichit le QSqlQuery pour appliquer les parametres
  * contenue dans 'urlFiltreDevises' définie dans 'DialogueChoixDevises'.
  */
-void principal::rafraichitSQLQueryModel()
+void Principal::rafraichitSQLQueryModel()
 {
     urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom" ;
     modeleQ->setQuery(urlPourModele) ;
@@ -327,7 +327,7 @@ void principal::rafraichitSQLQueryModel()
 
 /** Création de la base de donnée
  */
-bool principal::creerBdd()
+bool Principal::creerBdd()
 {
     db = QSqlDatabase::addDatabase( "QSQLITE") ;
     //db.setHostName(serveur);          // initialisation du serveur : non utilisé avec SQLite
