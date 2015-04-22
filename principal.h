@@ -44,6 +44,7 @@ private slots:
     void requeteGraph(QModelIndex index) ;
     void transactionAuto() ;
     void options() ;
+    void afficheGraphique();
 
 private:
     QWebView* webView ;

@@ -35,7 +35,7 @@ DialogueOptions::DialogueOptions()
     repeteTimer->insertItem(1,"10 secondes");
     repeteTimer->insertItem(2,"30 secondes");
     repeteTimer->insertItem(3,"60 secondes");
-    repeteTimer->setCurrentIndex(settings.value("indexTimer", 3).toInt());
+    repeteTimer->setCurrentIndex(settings.value("indexTimer", 1).toInt());
     QLabel* infoBdd = new QLabel(this);
     infoBdd->setText("Les modifications des paramètres de la base de donnée\nseront pris en compte à la prochaine execution de l'application.");
 

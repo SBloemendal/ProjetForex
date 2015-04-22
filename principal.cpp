@@ -18,6 +18,7 @@
 #include <QHeaderView>
 #include <QXmlStreamReader>
 #include <QGraphicsEffect>
+#include <QPushButton>
 
 
 /** Affiche une vue des valeurs les plus récentes des couples de devises sélectionnés,
@@ -63,15 +64,13 @@ principal::principal()
 
     QWidget *zoneCentrale = new QWidget;
 
-    setFixedHeight(580);
-    setFixedWidth(1400);
-
     QMenuBar* barreDeMenu = menuBar() ;
     QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
     QMenu* menuDevises = barreDeMenu->addMenu("Affichage") ;
     menuFichier->addAction("Options", this, SLOT(options())) ;
     menuFichier->addAction("Quitter", qApp, SLOT(quit())) ;
     menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
+    menuDevises->addAction("Affichage des courbes", this, SLOT(afficheGraphique())) ;
     menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
     menuDevises->addAction("Simulation de transactions", this, SLOT(simulationTransaction())) ;
     menuDevises->addAction("Transactions automatiques", this, SLOT(transactionAuto())) ;
@@ -85,16 +84,39 @@ principal::principal()
     tableView->verticalHeader()->setDefaultSectionSize(20);
     tableView->horizontalHeader()->setDefaultSectionSize(90);
     tableView->horizontalHeader()->setStretchLastSection(true);
-    tableView->setSortingEnabled(true);
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableView->setMinimumSize(500,400);
     connect (tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(requeteGraph(QModelIndex))) ;
 
     graph = new QWebView ;
+    graph->hide();
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=1&timescale=300&candles=50&style=line"));
+    graph->setMinimumSize(500,400);
 
+    QHBoxLayout* layoutBoutons = new QHBoxLayout;
+    QPushButton* boutonGraph = new QPushButton("Graphique");
+    connect (boutonGraph, SIGNAL(clicked()), this, SLOT(afficheGraphique()));
+    QPushButton* boutonInterval = new QPushButton("Intervalle");
+    connect (boutonInterval, SIGNAL(clicked()), this, SLOT(intervalleTemps()));
+    QPushButton* boutonSimulation = new QPushButton("Simulation");
+    connect (boutonSimulation, SIGNAL(clicked()), this, SLOT(simulationTransaction()));
+    QPushButton* boutonTransaction = new QPushButton("Transaction");
+    connect (boutonTransaction, SIGNAL(clicked()), this, SLOT(transactionAuto()));
+    layoutBoutons->addWidget(boutonGraph);
+    layoutBoutons->addWidget(boutonInterval);
+    layoutBoutons->addWidget(boutonSimulation);
+    layoutBoutons->addWidget(boutonTransaction);
 
-    layout->addWidget(tableView);
-    layout->addWidget(graph);
+    QVBoxLayout* layoutGauche = new QVBoxLayout;
+    layoutGauche->addWidget(tableView);
+    layoutGauche->addLayout(layoutBoutons);
+    layoutGauche->addStretch();
+    QVBoxLayout* layoutDroit = new QVBoxLayout;
+    layoutDroit->addWidget(graph);
+    layoutDroit->addStretch();
+    layout->addLayout(layoutGauche);
+    layout->addLayout(layoutDroit);
+    layout->addStretch();
     zoneCentrale->setLayout(layout);
 
     setCentralWidget(zoneCentrale);
@@ -103,14 +125,19 @@ principal::principal()
     effetTransparent->setOpacity(0.85);
     QGraphicsDropShadowEffect * dse = new QGraphicsDropShadowEffect();
     dse->setBlurRadius(10);
+    dse->setOffset(4);
 
     qApp->setStyleSheet("QMainWindow { background-image: url(Uk-Forex1.png); }");
     tableView->setStyleSheet("background-color: transparent");
-    tableView->horizontalHeader()->setStyleSheet("background-color: transparent");
-    tableView->horizontalHeader()->setGraphicsEffect(dse);
     tableView->setGraphicsEffect(dse);
     graph->setStyleSheet("background-color: transparent");
     graph->setGraphicsEffect(effetTransparent);
+}
+
+void principal::afficheGraphique()
+{
+    if (graph->isVisible()) graph->hide();
+    else graph->show();
 }
 
 /** Selection du couple de devises a afficher
