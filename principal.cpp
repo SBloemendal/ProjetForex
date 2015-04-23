@@ -1,4 +1,5 @@
 #include "principal.h"
+#include "cssstylesheet.h"
 #include "coupledevise.h"
 #include "dialogchoixdevises.h"
 #include "dialogueoptions.h"
@@ -65,10 +66,10 @@ Principal::Principal()
     // On lance la requete http et on lance le timer
     // pour répéter la requete à intervalle régulier
     //
-    connexionHttp();
-    QTimer* timerRequete = new QTimer();
-    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
-    timerRequete->start(delaiTimer);
+//    connexionHttp();
+//    QTimer* timerRequete = new QTimer();
+//    connect (timerRequete, SIGNAL(timeout()), this, SLOT(connexionHttp())) ;
+//    timerRequete->start(delaiTimer);
 
 
     // Design de la fenêtre principale
@@ -80,7 +81,7 @@ Principal::Principal()
     QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
     QMenu* menuDevises = barreDeMenu->addMenu("Affichage") ;
     menuFichier->addAction("Options", this, SLOT(options())) ;
-    menuFichier->addAction("Quitter", qApp, SLOT(quit())) ;
+    menuFichier->addAction("Quitter", qApp, SLOT(quit())) ;    
     menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
     menuDevises->addAction("Affichage des courbes", this, SLOT(afficheGraphique())) ;
     menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
@@ -89,6 +90,7 @@ Principal::Principal()
 
     // Le tableview qui affichera les cotations en temps réel
     tableView = new QTableView(this);
+    tableView->setObjectName("view");
     tableView->setModel(proxyModel);
     tableView->verticalHeader()->hide();
     tableView->setShowGrid(false);
@@ -105,7 +107,7 @@ Principal::Principal()
     graph = new QWebView ;
     graph->hide();
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=1&timescale=300&candles=50&style=line"));
-    graph->setMinimumSize(700,400);
+    graph->setMinimumSize(600,400);
 
     // Les boutons permettant d'accéder aux différentes fonctions de l'application
     QPushButton* boutonGraph = new QPushButton("Graphique");
@@ -143,11 +145,12 @@ Principal::Principal()
     QGraphicsDropShadowEffect * dse = new QGraphicsDropShadowEffect();
     dse->setBlurRadius(10);
     dse->setOffset(4);
-    qApp->setStyleSheet("QMainWindow { background-image: url(:/images/Uk-Forex.jpg); }");
-    tableView->setStyleSheet("background-color: transparent");
     tableView->setGraphicsEffect(dse);
-    graph->setStyleSheet("background-color: transparent");
     graph->setGraphicsEffect(effetTransparent);
+
+    // Et on applique la feuille de style
+    // définie dans le fichier d'entête CssStyleSheet.h
+    qApp->setStyleSheet(stylesheet);
 }
 
 

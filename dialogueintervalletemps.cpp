@@ -64,6 +64,7 @@ DialogueIntervalleTemps::DialogueIntervalleTemps()
     selectionChange();
 
     tableView = new QTableView ;
+    tableView->setObjectName("view");
     tableView->setModel(proxyModel);
     tableView->setSortingEnabled(true);
     tableView->setMinimumHeight(500);

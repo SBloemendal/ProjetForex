@@ -6,7 +6,7 @@
 QT += widgets sql webkitwidgets
 
 
-TARGET = projet3_TSDI
+TARGET = projet3_trading
 
 TEMPLATE = app
 CONFIG += qt release windows
@@ -27,7 +27,8 @@ HEADERS += \
     dialogueoptions.h \
     dialogueintervalletemps.h \
     dialoguesimulationtransactions.h \
-    dialoguetransactionautomatique.h
+    dialoguetransactionautomatique.h \
+    cssstylesheet.h
 
 RESOURCES += \
     ressources.qrc

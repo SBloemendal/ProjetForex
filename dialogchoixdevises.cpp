@@ -25,7 +25,7 @@ DialogueChoixDevises::DialogueChoixDevises() : urlChoixCouples("")
     //
     setWindowTitle("Afficher ces couples de devises");
     setFixedHeight(200);
-    setFixedWidth(200);
+    setFixedWidth(250);
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;
 
 
