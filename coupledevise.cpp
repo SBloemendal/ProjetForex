@@ -1,6 +1,5 @@
 #include "coupledevise.h"
 #include <QtSql/QSqlQuery>
-#include <QDebug>
 
 /** On initialise tous les attributs à NULL à la création de l'objet.
  */

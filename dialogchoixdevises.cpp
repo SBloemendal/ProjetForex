@@ -17,7 +17,7 @@ DialogueChoixDevises::DialogueChoixDevises() : urlChoixCouples("")
     //
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
-    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+    QSettings settings(XmlFormat, QSettings::UserScope, "settings");
     settings.beginGroup("afficherDevises");
 
 
@@ -113,7 +113,7 @@ void DialogueChoixDevises::enregistreValeurs()
     // On crée un QSettings pour stocker les valeurs
     const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
-    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+    QSettings settings(XmlFormat, QSettings::UserScope, "settings");
     settings.beginGroup("afficherDevises");
 
     // Création d'un string contenant la partie de la requete permettant la sélection des couples à afficher dans la fenetre principale

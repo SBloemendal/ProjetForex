@@ -28,3 +28,6 @@ HEADERS += \
     dialogueintervalletemps.h \
     dialoguesimulationtransactions.h \
     dialoguetransactionautomatique.h
+
+RESOURCES += \
+    ressources.qrc

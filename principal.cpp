@@ -33,7 +33,7 @@ Principal::Principal()
     // On crée un QSettings
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
-    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+    QSettings settings(XmlFormat, QSettings::UserScope, "settings");
     //settings.clear(); // Remet tous les paramètres à leur valeur par défaut
 
     // Initialisation des attributs avec le QSettings
@@ -105,7 +105,7 @@ Principal::Principal()
     graph = new QWebView ;
     graph->hide();
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=1&timescale=300&candles=50&style=line"));
-    graph->setMinimumSize(500,400);
+    graph->setMinimumSize(700,400);
 
     // Les boutons permettant d'accéder aux différentes fonctions de l'application
     QPushButton* boutonGraph = new QPushButton("Graphique");
@@ -143,7 +143,7 @@ Principal::Principal()
     QGraphicsDropShadowEffect * dse = new QGraphicsDropShadowEffect();
     dse->setBlurRadius(10);
     dse->setOffset(4);
-    qApp->setStyleSheet("QMainWindow { background-image: url(Uk-Forex1.png); }");
+    qApp->setStyleSheet("QMainWindow { background-image: url(:/images/Uk-Forex.jpg); }");
     tableView->setStyleSheet("background-color: transparent");
     tableView->setGraphicsEffect(dse);
     graph->setStyleSheet("background-color: transparent");

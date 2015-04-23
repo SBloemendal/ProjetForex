@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/"/>
+    <qresource prefix="/images">
+        <file>Uk-Forex.jpg</file>
+    </qresource>
+</RCC>

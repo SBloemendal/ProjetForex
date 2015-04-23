@@ -18,7 +18,7 @@ DialogueOptions::DialogueOptions()
     //
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
-    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+    QSettings settings(XmlFormat, QSettings::UserScope, "settings");
     settings.beginGroup("Options");
 
 
@@ -147,7 +147,7 @@ void DialogueOptions::enregistreValeurs()
     // Création d'un QSettings
     const QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
-    QSettings settings(XmlFormat, QSettings::UserScope, "CCI Colmar", "ProjetForex_SB");
+    QSettings settings(XmlFormat, QSettings::UserScope, "settings");
 
     // Création de la partie de l'url permettant la sélection des couples à demander dans la requete HTTP
     if (cb1->isChecked())
