@@ -11,7 +11,6 @@
 #define DIALOGUEOPTIONS_H
 
 #include "principal.h"
-
 #include <QDialog>
 
 class QLineEdit ;

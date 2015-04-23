@@ -28,7 +28,8 @@ HEADERS += \
     dialogueintervalletemps.h \
     dialoguesimulationtransactions.h \
     dialoguetransactionautomatique.h \
-    cssstylesheet.h
+    cssstylesheet.h \
+    xmlstream.h
 
 RESOURCES += \
     ressources.qrc

@@ -1,6 +1,7 @@
 #ifndef CSSSTYLESHEET
 #define CSSSTYLESHEET
 
+
 /** Feuille de style de l'application.
  * Gère l'apparence de toutes les fenetres
  */

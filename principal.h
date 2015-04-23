@@ -10,12 +10,13 @@
 #ifndef PRINCIPAL_H
 #define PRINCIPAL_H
 
+
 #include <QApplication>
 #include <QMainWindow>
 #include <QSqlDatabase>
 #include <QSettings>
 #include <QModelIndex>
-
+#include "xmlstream.h"
 
 class QWebView ;
 class QSqlQueryModel ;
@@ -67,9 +68,6 @@ private:
     QString urlForex ;
     int delaiTimer ;
 };
-
-bool readXmlFile( QIODevice& device, QSettings::SettingsMap& map );
-bool writeXmlFile( QIODevice& device, const QSettings::SettingsMap& map );
 
 #endif // PRINCIPAL_H
 

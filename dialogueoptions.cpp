@@ -91,9 +91,9 @@ DialogueOptions::DialogueOptions()
     cb7->setChecked(settings.value("cb7", true).toBool());
     cb8 = new QCheckBox("GBP/JPY", this) ;
     cb8->setChecked(settings.value("cb8", true).toBool());
-    cb9 = new QCheckBox("CHF/JPY", this) ;
+    cb9 = new QCheckBox("GBP/CHF", this) ;
     cb9->setChecked(settings.value("cb9", true).toBool());
-    cb10= new QCheckBox("GBP/CHF", this) ;
+    cb10= new QCheckBox("CHF/JPY", this) ;
     cb10->setChecked(settings.value("cb10", true).toBool());
     layoutDroit->addWidget(cb6);
     layoutDroit->addWidget(cb7);
