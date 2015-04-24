@@ -73,19 +73,20 @@ Principal::Principal()
 
     // Design de la fenêtre principale
     //
+    setWindowIcon(QIcon(":/images/glyphicons-264-bank.png"));
     zoneCentrale = new QWidget;
 
     // Barre de menu
     QMenuBar* barreDeMenu = menuBar() ;
     QMenu* menuFichier = barreDeMenu->addMenu("Système") ;
     QMenu* menuDevises = barreDeMenu->addMenu("Affichage") ;
-    menuFichier->addAction("Options", this, SLOT(options())) ;
-    menuFichier->addAction("Quitter", qApp, SLOT(quit())) ;    
-    menuDevises->addAction("Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
-    menuDevises->addAction("Affichage des courbes", this, SLOT(afficheGraphique())) ;
-    menuDevises->addAction("Par intervalle de temps", this, SLOT(intervalleTemps())) ;
-    menuDevises->addAction("Simulation de transactions", this, SLOT(simulationTransaction())) ;
-    menuDevises->addAction("Transactions automatiques", this, SLOT(transactionAuto())) ;
+    menuFichier->addAction(QIcon(":/images/glyphicons-140-adjust-alt.png"), "Options", this, SLOT(options())) ;
+    menuFichier->addAction(QIcon(":/images/glyphicons-64-power.png"),"Quitter", qApp, SLOT(quit())) ;
+    menuDevises->addAction(QIcon(":/images/glyphicons-517-menu-hamburger.png"),"Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
+    menuDevises->addAction(QIcon(":/images/glyphicons-42-charts.png"),"Affichage des courbes", this, SLOT(afficheGraphique())) ;
+    menuDevises->addAction(QIcon(":/images/glyphicons-46-calendar.png"),"Par intervalle de temps", this, SLOT(intervalleTemps())) ;
+    menuDevises->addAction(QIcon(":/images/glyphicons-81-retweet.png"),"Simulation de transactions", this, SLOT(simulationTransaction())) ;
+    menuDevises->addAction(QIcon(":/images/glyphicons-228-usd.png"),"Transactions automatiques", this, SLOT(transactionAuto())) ;
 
     // Le tableview qui affichera les cotations en temps réel
     tableView = new QTableView(this);
@@ -109,13 +110,13 @@ Principal::Principal()
     graph->setMinimumSize(600,400);
 
     // Les boutons permettant d'accéder aux différentes fonctions de l'application
-    QPushButton* boutonGraph = new QPushButton("Graphique");
+    QPushButton* boutonGraph = new QPushButton(QIcon(":/images/glyphicons-42-charts.png"),"Graphique");
     connect (boutonGraph, SIGNAL(clicked()), this, SLOT(afficheGraphique()));
-    QPushButton* boutonInterval = new QPushButton("Intervalle");
+    QPushButton* boutonInterval = new QPushButton(QIcon(":/images/glyphicons-46-calendar.png"), "Intervalle");
     connect (boutonInterval, SIGNAL(clicked()), this, SLOT(intervalleTemps()));
-    QPushButton* boutonSimulation = new QPushButton("Simulation");
+    QPushButton* boutonSimulation = new QPushButton(QIcon(":/images/glyphicons-81-retweet.png"), "Simulation");
     connect (boutonSimulation, SIGNAL(clicked()), this, SLOT(simulationTransaction()));
-    QPushButton* boutonTransaction = new QPushButton("Transaction");
+    QPushButton* boutonTransaction = new QPushButton(QIcon(":/images/glyphicons-228-usd.png"),"Transaction");
     connect (boutonTransaction, SIGNAL(clicked()), this, SLOT(transactionAuto()));
 
     // On place le tout dans des layouts

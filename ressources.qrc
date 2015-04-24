@@ -2,5 +2,15 @@
     <qresource prefix="/"/>
     <qresource prefix="/images">
         <file>Uk-Forex.jpg</file>
+        <file>glyphicons-42-charts.png</file>
+        <file>glyphicons-46-calendar.png</file>
+        <file>glyphicons-64-power.png</file>
+        <file>glyphicons-140-adjust-alt.png</file>
+        <file>glyphicons-228-usd.png</file>
+        <file>glyphicons-517-menu-hamburger.png</file>
+        <file>glyphicons-81-retweet.png</file>
+        <file>glyphicons-264-bank.png</file>
+        <file>glyphicons-372-global.png</file>
+        <file>glyphicons-421-tower.png</file>
     </qresource>
 </RCC>

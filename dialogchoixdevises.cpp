@@ -24,6 +24,7 @@ DialogueChoixDevises::DialogueChoixDevises() : urlChoixCouples("")
     // Parametres généraux
     //
     setWindowTitle("Afficher ces couples de devises");
+    setWindowIcon(QIcon(":/images/glyphicons-517-menu-hamburger.png"));
     setFixedHeight(200);
     setFixedWidth(250);
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;

@@ -25,6 +25,7 @@ DialogueOptions::DialogueOptions()
     // Parametres généraux de la fenetre
     //
     setWindowTitle("Options");
+    setWindowIcon(QIcon(":/images/glyphicons-140-adjust-alt.png"));
     setFixedHeight(500);
     setFixedWidth(400);
     QVBoxLayout* layoutPrincipal = new QVBoxLayout;

@@ -7,6 +7,7 @@
 DialogueTransactionAutomatique::DialogueTransactionAutomatique()
 {
     setWindowTitle("Calculateur de profit");
+    setWindowIcon(QIcon(":/images/glyphicons-228-usd.png"));
     setFixedHeight(430);
     setFixedWidth(440);
     graph = new QWebView (this);

@@ -12,6 +12,7 @@
 DialogueSimulationTransactions::DialogueSimulationTransactions()
 {
     setWindowTitle("Simulation de transactions");
+    setWindowIcon(QIcon(":/images/glyphicons-81-retweet.png"));
     setFixedHeight(150);
     setFixedWidth(200);
 

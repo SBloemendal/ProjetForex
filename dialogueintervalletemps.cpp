@@ -18,6 +18,7 @@ DialogueIntervalleTemps::DialogueIntervalleTemps()
     // Paramètres généraux
     //
     setWindowTitle("Affichage par intervalle de temps");
+    setWindowIcon(QIcon(":/images/glyphicons-46-calendar.png"));
     setFixedWidth(570);
     QGridLayout* layout = new QGridLayout(this) ;
 
