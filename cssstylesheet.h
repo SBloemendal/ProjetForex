@@ -3,7 +3,7 @@
 
 
 /** Feuille de style de l'application.
- * Gère l'apparence de toutes les fenetres
+ * Gère l'apparence de toutes les fenetres.
  */
 QString stylesheet ="QDialog   {"
                     "           border: 3px solid gray;"
@@ -32,16 +32,17 @@ QString stylesheet ="QDialog   {"
                     "            font-size: 10px;"
                     "            padding-left: 5px;"
                     "            padding-right: 5px;"
-                    "            min-width: 50px;"
+                    "            min-width: 100px;"
                     "            max-width: 100px;"
-                    "            min-height: 13px;"
-                    "            max-height: 13px;"
+                    "            min-height: 15px;"
+                    "            max-height: 60px;"
                     "          }"
                     "QPushButton:hover {"
                     "            background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #99e, stop: 0.49 #77c, stop: 0.5 #66b, stop: 1 #77c);"
                     "          }"
                     "QMainWindow {"
-                    "            background-image: url(:/images/Uk-Forex.jpg);"
+                    "            border-width: 0px 0px 0px 500px;"
+                    "            border-image: url(:/images/Uk-Forex.jpg) 0 0 0 700 repeat stretch;"
                     "          }"
                     "QHeaderView, QWebView, QTableView#view, QMenuBar, QMenuBar::item {"
                     "            background-color: transparent;"

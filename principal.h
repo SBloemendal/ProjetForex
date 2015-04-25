@@ -21,7 +21,8 @@
 class QWebView ;
 class QSqlQueryModel ;
 class QTableView ;
-
+class QHBoxLayout ;
+class QVBoxLayout ;
 
 class Principal : public QMainWindow
 {
@@ -53,6 +54,9 @@ private slots:
 
 private:
     QWidget *zoneCentrale ;
+    QHBoxLayout* layout ;
+    QVBoxLayout* layoutGauche ;
+    QVBoxLayout* layoutDroit ;
     QWebView* webView ;
     QWebView* graph ;
     QSqlQueryModel* modeleQ ;

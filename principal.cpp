@@ -50,7 +50,9 @@ Principal::Principal()
     // On crée la base de donnée et le modèle qui la lira,
     // on crée aussi un modele de filtre qui sera placé entre le modele
     // et la vue.
-    // Et on initialise un webview qui enverra la requete HTTP
+    // Et on initialise un webview qui enverra la requete HTTP et qui
+    // appelle la méthode recupereDonnees a chaque fois qu'il aura recu
+    // la réponse du site source.
     //
     creerBdd() ;
     modeleQ = new QSqlQueryModel ;
@@ -84,9 +86,9 @@ Principal::Principal()
     menuFichier->addAction(QIcon(":/images/glyphicons-64-power.png"),"Quitter", qApp, SLOT(quit())) ;
     menuDevises->addAction(QIcon(":/images/glyphicons-517-menu-hamburger.png"),"Choix d'affichage", this, SLOT(choixCoupleDevises())) ;
     menuDevises->addAction(QIcon(":/images/glyphicons-42-charts.png"),"Affichage des courbes", this, SLOT(afficheGraphique())) ;
-    menuDevises->addAction(QIcon(":/images/glyphicons-46-calendar.png"),"Par intervalle de temps", this, SLOT(intervalleTemps())) ;
+    menuDevises->addAction(QIcon(":/images/glyphicons-46-calendar.png"),"Intervalle de temps", this, SLOT(intervalleTemps())) ;
     menuDevises->addAction(QIcon(":/images/glyphicons-81-retweet.png"),"Simulation de transactions", this, SLOT(simulationTransaction())) ;
-    menuDevises->addAction(QIcon(":/images/glyphicons-228-usd.png"),"Transactions automatiques", this, SLOT(transactionAuto())) ;
+    menuDevises->addAction(QIcon(":/images/glyphicons-228-usd.png"),"Calculateur de profit", this, SLOT(transactionAuto())) ;
 
     // Le tableview qui affichera les cotations en temps réel
     tableView = new QTableView(this);
@@ -108,49 +110,141 @@ Principal::Principal()
     graph->hide();
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=1&timescale=300&candles=50&style=line"));
     graph->setMinimumSize(600,400);
+    graph->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Les boutons permettant d'accéder aux différentes fonctions de l'application
-    QPushButton* boutonGraph = new QPushButton(QIcon(":/images/glyphicons-42-charts.png"),"Graphique");
+    QPushButton* boutonGraph = new QPushButton("Graphique");
     connect (boutonGraph, SIGNAL(clicked()), this, SLOT(afficheGraphique()));
-    QPushButton* boutonInterval = new QPushButton(QIcon(":/images/glyphicons-46-calendar.png"), "Intervalle");
+    QPushButton* boutonInterval = new QPushButton("Intervalle");
     connect (boutonInterval, SIGNAL(clicked()), this, SLOT(intervalleTemps()));
-    QPushButton* boutonSimulation = new QPushButton(QIcon(":/images/glyphicons-81-retweet.png"), "Simulation");
+    QPushButton* boutonSimulation = new QPushButton("Simulation");
     connect (boutonSimulation, SIGNAL(clicked()), this, SLOT(simulationTransaction()));
-    QPushButton* boutonTransaction = new QPushButton(QIcon(":/images/glyphicons-228-usd.png"),"Transaction");
+    QPushButton* boutonTransaction = new QPushButton("Profit");
     connect (boutonTransaction, SIGNAL(clicked()), this, SLOT(transactionAuto()));
 
     // On place le tout dans des layouts
     QHBoxLayout* layoutBoutons = new QHBoxLayout;
+    layoutBoutons->addStretch();
     layoutBoutons->addWidget(boutonGraph);
     layoutBoutons->addWidget(boutonInterval);
     layoutBoutons->addWidget(boutonSimulation);
     layoutBoutons->addWidget(boutonTransaction);
-    QVBoxLayout* layoutGauche = new QVBoxLayout;
+    layoutBoutons->addStretch();
+    layoutGauche = new QVBoxLayout;
     layoutGauche->addWidget(tableView);
     layoutGauche->addLayout(layoutBoutons);
     layoutGauche->addStretch();
-    QVBoxLayout* layoutDroit = new QVBoxLayout;
+    layoutDroit = new QVBoxLayout;
     layoutDroit->addWidget(graph);
-    layoutDroit->addStretch();
-    QHBoxLayout* layout = new QHBoxLayout;
+    layout = new QHBoxLayout;
     layout->addLayout(layoutGauche);
+    layout->addStretch();
     layout->addLayout(layoutDroit);
-    layout->addStretch(1);
     zoneCentrale->setLayout(layout);
     setCentralWidget(zoneCentrale);
 
     // On rajoute quelques effets graphiques
     QGraphicsOpacityEffect* effetTransparent = new QGraphicsOpacityEffect;
-    effetTransparent->setOpacity(0.85);
-    QGraphicsDropShadowEffect * dse = new QGraphicsDropShadowEffect();
-    dse->setBlurRadius(10);
-    dse->setOffset(4);
-    tableView->setGraphicsEffect(dse);
+    effetTransparent->setOpacity(0.9);
+    QGraphicsDropShadowEffect * ombrePortee = new QGraphicsDropShadowEffect();
+    ombrePortee->setBlurRadius(10);
+    ombrePortee->setOffset(4);
+    tableView->setGraphicsEffect(ombrePortee);
     graph->setGraphicsEffect(effetTransparent);
 
     // Et on applique la feuille de style
     // définie dans le fichier d'entête CssStyleSheet.h
     qApp->setStyleSheet(stylesheet);
+}
+
+
+
+/** Création de la base de donnée
+ */
+bool Principal::creerBdd()
+{
+    db = QSqlDatabase::addDatabase( "QSQLITE") ;
+    //db.setHostName(serveur);          // initialisation du serveur : non utilisé avec SQLite
+    db.setDatabaseName("./" + nomBdd);  // initialisation du nom de la base de donnée
+    //db.setUserName(loginBdd);         // initialisation du login : non utilisé avec SQLite
+    //db.setPassword(passwordBdd);      // initialisation du password : non utilisé avec SQLite
+
+    if (db.open()){                                  // Test si on a pu se connecter à la BDD
+        qDebug() << "Connecté à la base de donnée" ;
+        if (!db.tables().contains("COTATION")){      // Si la table COTATION n'existe pas, on la crée
+            QString requeteSQL ;
+            requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date)";
+            db.exec(requeteSQL) ;
+            return true ;
+        } else return true ;
+    } else {
+        qWarning() << "Pas de connexion à la base de donnée" ;
+        return false ;
+    }
+}
+
+
+
+/** Envoi de la requette HTTP par l'intermédiaire du QWebView.
+ * La variable 'urlForex' contient l'adresse du site saisie par l'utilisateur,
+ * définie dans 'DialogueOptions'.
+ * La variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
+ * définie dans 'DialogueOptions'.
+ */
+void Principal::connexionHttp()
+{
+    QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
+    url += urlChoixDevises;
+    url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
+    webView->load(QUrl(url));
+    webView->close();
+}
+
+
+
+/** Fonction pour recuperer les données de la requete HTTP
+ * Pour chaque couple de devises, on crée un objet 'CoupleDevise'
+ * et on y stocke les valeurs récupéré du web service.
+ * On accède aux valeurs par le biais des CSSselector grace à un QWebElement
+ */
+void Principal::recupereDonnees()
+{
+    QWebElement element ;
+
+    // On parse 'urlChoixDevises' pour savoir sur quel couple de devises il faut boucler
+    QStringList listeCouples ;
+    listeCouples = urlChoixDevises.split(";");
+    listeCouples.removeLast();
+    listeCouples.replaceInStrings(" ", "");
+
+    // Boucle pour recuperer les valeurs pour chaque couple de devises
+    foreach (QString index, listeCouples) {
+        CoupleDevise couple ;
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + " span.ftqa11bb") ; // CSSselector pour le nom du couple de devises
+        couple.coupleDevise = element.toPlainText() ;
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=bid]") ; // CSSselector pour la valeur d'achat
+        couple.valeurAchat = element.toPlainText() ;
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=ask]") ; // CSSselector pour la valeur de vente
+        couple.valeurVente = element.toPlainText() ;
+        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=pcp]") ; // CSSselector pour le pourcentage de variation de la cotation
+        couple.variation = element.toPlainText() ;
+
+        // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
+        couple.save(&db) ;
+    }
+    // On rafraichit le modele du TableView
+    rafraichitSQLQueryModel();
+}
+
+
+
+/** Rafraichit le QSqlQuery pour appliquer les parametres
+ * contenue dans 'urlFiltreDevises' définie dans 'DialogueChoixDevises'.
+ */
+void Principal::rafraichitSQLQueryModel()
+{
+    urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom" ;
+    modeleQ->setQuery(urlPourModele) ;
 }
 
 
@@ -163,18 +257,25 @@ void Principal::afficheGraphique()
 {
     if (graph->isVisible())
     {
+        layout->setStretchFactor(layoutGauche, 1);
+        layout->setStretchFactor(layoutDroit, 0);
         graph->hide();
         zoneCentrale->resize(500,400);
         this->adjustSize();
-    } else graph->show();
+    } else {
+        layout->setStretchFactor(layoutGauche, 0);
+        layout->setStretchFactor(layoutDroit, 1);
+        graph->show();
+    }
 }
 
 
 
 /** Selection du couple de devises a afficher
  * dans le graphique de la fenetre principale.
- * On récupère l'index de la ligne cliquée par
- * l'utilisateur pour savoir quel couple afficher.
+ * On récupère l'index de la ligne sélectionnée
+ * dans le tableview par l'utilisateur pour
+ * savoir quel couple afficher.
  */
 void Principal::requeteGraph(QModelIndex index)
 {
@@ -206,16 +307,6 @@ void Principal::requeteGraph(QModelIndex index)
             choix = 13 ;
 
     graph->load(QUrl("http://charts.investing.com/index.php?pair_ID=" + QString::number(choix) + "&timescale=300&candles=50&style=line")) ;
-}
-
-
-
-/** Ouvre une fenetre 'Transaction automatique'
- */
-void Principal::transactionAuto()
-{
-    DialogueTransactionAutomatique* transaction = new DialogueTransactionAutomatique ;
-    transaction->exec();
 }
 
 
@@ -266,88 +357,10 @@ void Principal::intervalleTemps()
 
 
 
-/** Envoi de la requette HTTP par l'intermédiaire du QWebView.
- * La variable 'urlForex' contient l'adresse du site saisie par l'utilisateur,
- * définie dans 'DialogueOptions'.
- * La variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
- * définie dans 'DialogueOptions'.
+/** Ouvre une fenetre 'Transaction automatique'
  */
-void Principal::connexionHttp()
+void Principal::transactionAuto()
 {
-    QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
-    url += urlChoixDevises;
-    url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
-    webView->load(QUrl(url));
-    webView->close();
-}
-
-
-/** Fonction pour recuperer les données de la requete HTTP
- * Pour chaque couple de devises, on crée un objet 'CoupleDevise'
- * et on y stocke les valeurs récupéré du web service.
- * On accède aux valeurs par le biais des CSSselector grace à un QWebElement
- */
-void Principal::recupereDonnees()
-{
-    QWebElement element ;
-
-    // On parse 'urlChoixDevises' pour savoir sur quel couple de devises il faut boucler
-    QStringList listeCouples ;
-    listeCouples = urlChoixDevises.split(";");
-    listeCouples.removeLast();
-    listeCouples.replaceInStrings(" ", "");
-
-    // Boucle pour recuperer les valeurs pour chaque couple de devises
-    foreach (QString index, listeCouples) {
-        CoupleDevise couple ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + " span.ftqa11bb") ; // CSSselector pour le nom du couple de devises
-        couple.coupleDevise = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=bid]") ; // CSSselector pour la valeur d'achat
-        couple.valeurAchat = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=ask]") ; // CSSselector pour la valeur de vente
-        couple.valeurVente = element.toPlainText() ;
-        element = webView->page()->mainFrame()->findFirstElement("tr#pair_" + index + ">td[class*=pcp]") ; // CSSselector pour le pourcentage de variation de la cotation
-        couple.variation = element.toPlainText() ;
-
-        // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
-        couple.save(&db) ;
-    }
-    // On rafraichit le modele du TableView
-    rafraichitSQLQueryModel();
-}
-
-
-
-/** Rafraichit le QSqlQuery pour appliquer les parametres
- * contenue dans 'urlFiltreDevises' définie dans 'DialogueChoixDevises'.
- */
-void Principal::rafraichitSQLQueryModel()
-{
-    urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom" ;
-    modeleQ->setQuery(urlPourModele) ;
-}
-
-
-/** Création de la base de donnée
- */
-bool Principal::creerBdd()
-{
-    db = QSqlDatabase::addDatabase( "QSQLITE") ;
-    //db.setHostName(serveur);          // initialisation du serveur : non utilisé avec SQLite
-    db.setDatabaseName("./" + nomBdd);  // initialisation du nom de la base de donnée
-    //db.setUserName(loginBdd);         // initialisation du login : non utilisé avec SQLite
-    //db.setPassword(passwordBdd);      // initialisation du password : non utilisé avec SQLite
-
-    if (db.open()){                                  // Test si on a pu se connecter à la BDD
-        qDebug() << "Connecté à la base de donnée" ;
-        if (!db.tables().contains("COTATION")){      // Si la table COTATION n'existe pas, on la crée
-            QString requeteSQL ;
-            requeteSQL = "create table COTATION (id INTEGER PRIMARY KEY AUTOINCREMENT, nom varchar(10), achat double, vente double, variation double, heure time, jour date)";
-            db.exec(requeteSQL) ;
-            return true ;
-        } else return true ;
-    } else {
-        qWarning() << "Pas de connexion à la base de donnée" ;
-        return false ;
-    }
+    DialogueTransactionAutomatique* transaction = new DialogueTransactionAutomatique ;
+    transaction->exec();
 }

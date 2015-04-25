@@ -15,6 +15,8 @@ DialogueTransactionAutomatique::DialogueTransactionAutomatique()
 
 }
 
+
+
 DialogueTransactionAutomatique::~DialogueTransactionAutomatique()
 {
 

@@ -41,21 +41,22 @@ DialogueOptions::DialogueOptions()
     loginBdd = new QLineEdit(settings.value("loginBdd", "admin").toString());
     passwordBdd = new QLineEdit(settings.value("passwordBdd", "admin").toString());
     urlForex = new QLineEdit(settings.value("urlForex", "http://fxrates.investing.com").toString());
-    repeteTimer = new QComboBox;
-    repeteTimer->insertItem(0,"5 secondes");
-    repeteTimer->insertItem(1,"10 secondes");
-    repeteTimer->insertItem(2,"30 secondes");
-    repeteTimer->insertItem(3,"60 secondes");
-    repeteTimer->setCurrentIndex(settings.value("indexTimer", 1).toInt());
+    delaiTimer = new QComboBox;
+    delaiTimer->insertItem(0,"5 secondes");
+    delaiTimer->insertItem(1,"10 secondes");
+    delaiTimer->insertItem(2,"30 secondes");
+    delaiTimer->insertItem(3,"60 secondes");
+    delaiTimer->setCurrentIndex(settings.value("indexTimer", 1).toInt());
     QLabel* infoBdd = new QLabel(this);
-    infoBdd->setText("Les modifications des paramètres de la base de donnée\nseront pris en compte à la prochaine execution de l'application.");
+    infoBdd->setText("Les modifications des paramètres de la base de donnée\n"
+                     "seront appliquées au prochain redémarrage de l'application.");
 
     groupBoxBddLayout->addRow("&Serveur :", serveur) ;
     groupBoxBddLayout->addRow("&Nom de la base de donnée :", nomBdd) ;
     groupBoxBddLayout->addRow("&Identifiant :", loginBdd) ;
     groupBoxBddLayout->addRow("&Mot de passe :", passwordBdd) ;
     groupBoxBddLayout->addRow("Site &Forex :", urlForex) ;
-    groupBoxBddLayout->addRow("Timer", repeteTimer);
+    groupBoxBddLayout->addRow("Timer", delaiTimer);
     groupBoxBddLayout->addRow(infoBdd);
     groupBoxBdd->setLayout(groupBoxBddLayout);
 
@@ -104,7 +105,10 @@ DialogueOptions::DialogueOptions()
 
     // Label d'information
     QLabel* infoSelectionDevise = new QLabel(this);
-    infoSelectionDevise->setText("Selectionner les couples de devises qui seront stockés dans la base de données.\nCeci n'affecte pas l'affichage de la fenêtre principale.\nPour modifier l'affichade de la fenêtre principale, utilisez le menu 'Affichage'");
+    infoSelectionDevise->setText("Selectionner les couples de devises qui seront stockés dans\n"
+                                 "la base de données. Ceci n'affecte pas l'affichage de la\n"
+                                 "fenêtre principale. Pour modifier l'affichade de la fenêtre\n"
+                                 "principale, utilisez le menu 'Affichage'");
 
     layoutDevises->addLayout(layoutGauche);
     layoutDevises->addLayout(layoutDroit);
@@ -131,6 +135,7 @@ DialogueOptions::DialogueOptions()
     setLayout(layoutPrincipal);
     settings.endGroup();
 }
+
 
 
 DialogueOptions::~DialogueOptions()
@@ -177,7 +182,7 @@ void DialogueOptions::enregistreValeurs()
     // et l'index du combobox pour pouvoir
     // le réinitialiser la prochaine fois.
     int timer;
-    switch (repeteTimer->currentIndex())
+    switch (delaiTimer->currentIndex())
     {
     case 0:
         timer = 5000;
@@ -214,7 +219,7 @@ void DialogueOptions::enregistreValeurs()
     settings.setValue("loginBdd", loginBdd->text());
     settings.setValue("passwordBdd", passwordBdd->text());
     settings.setValue("urlForex", urlForex->text());
-    settings.setValue("indexTimer", repeteTimer->currentIndex());
+    settings.setValue("indexTimer", delaiTimer->currentIndex());
     settings.setValue("timer", timer);
     settings.endGroup();
 

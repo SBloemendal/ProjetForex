@@ -39,7 +39,7 @@ private:
     QLineEdit* loginBdd ;
     QLineEdit* passwordBdd ;
     QLineEdit* urlForex ;
-    QComboBox* repeteTimer ;
+    QComboBox* delaiTimer ;
     QCheckBox* cb1;
     QCheckBox* cb2;
     QCheckBox* cb3;

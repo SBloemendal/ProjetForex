@@ -53,10 +53,13 @@ DialogueSimulationTransactions::DialogueSimulationTransactions()
 }
 
 
+
 DialogueSimulationTransactions::~DialogueSimulationTransactions()
 {
 
 }
+
+
 
 /** change la requete du modele en fonction des choix de l'utilisateur.
  */

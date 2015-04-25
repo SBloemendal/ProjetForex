@@ -87,17 +87,21 @@ DialogueIntervalleTemps::DialogueIntervalleTemps()
     layout->addWidget(dateFinLabel,2,0,1,2);
     layout->addWidget(dateFin,2,2,1,1);
     layout->addWidget(valider,0,3,3,1);
-    layout->addWidget(info,0,4,3,2);
+    layout->addWidget(info,1,4,2,2);
     layout->addWidget(annuler,0,5,1,1);
     layout->setColumnStretch(4,1);
     layout->addWidget(tableView,3,0,1,6);
     setLayout(layout);
 }
 
+
+
 DialogueIntervalleTemps::~DialogueIntervalleTemps()
 {
 
 }
+
+
 
 /** Change la requete du modele en fonction des choix de l'utilisateur
  */

@@ -23,7 +23,7 @@ DialogueChoixDevises::DialogueChoixDevises() : urlChoixCouples("")
 
     // Parametres généraux
     //
-    setWindowTitle("Afficher ces couples de devises");
+    setWindowTitle("Choix d'affichage");
     setWindowIcon(QIcon(":/images/glyphicons-517-menu-hamburger.png"));
     setFixedHeight(200);
     setFixedWidth(250);
@@ -102,10 +102,15 @@ DialogueChoixDevises::DialogueChoixDevises() : urlChoixCouples("")
     settings.endGroup();
 }
 
+
+
 DialogueChoixDevises::~DialogueChoixDevises()
 {
 
 }
+
+
+
 /** Methode permettant d'enregistrer les choix de l'utilisateur et de
  * modifier l'affichage de la fenetre principale en fonction
  */
@@ -116,6 +121,7 @@ void DialogueChoixDevises::enregistreValeurs()
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "settings");
     settings.beginGroup("afficherDevises");
+
 
     // Création d'un string contenant la partie de la requete permettant la sélection des couples à afficher dans la fenetre principale
     // Cette string sera ensuite passer a la fenetre principale pour modifier la requete d'affichage
@@ -147,6 +153,7 @@ void DialogueChoixDevises::enregistreValeurs()
     } else
         urlChoixCouples =  "WHERE jour=date('now') AND nom IN ''" ;
 
+
     // On enregistre l'etat de chaque checkbox pour
     // pouvoir les reinitialiser dans le meme etat
     // la prochaine fois.
@@ -162,6 +169,7 @@ void DialogueChoixDevises::enregistreValeurs()
     settings.setValue("cb10", cb10->isChecked());
     settings.setValue("urlchoixCouples", urlChoixCouples);
     settings.endGroup();
+
 
     // On envoie un signal attendue par la classe 'principal'.
     emit dialogueFinis(urlChoixCouples) ;
