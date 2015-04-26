@@ -1,5 +1,6 @@
 #include "dialogchoixdevises.h"
 #include "principal.h"
+#include "xmlstream.h"
 #include <QDir>
 #include <QBoxLayout>
 #include <QGroupBox>
@@ -7,10 +8,10 @@
 #include <QPushButton>
 #include <QLabel>
 
-/** Fenetre permettant à l'utilisateur de selectionner
- * les couples de devises qu'il veut voir afficher dans
- * la fenetre principale
- */
+/*  Fenetre permettant à l'utilisateur de selectionner
+    les couples de devises qu'il veut voir afficher dans
+    la fenetre principale
+*/
 DialogueChoixDevises::DialogueChoixDevises() : urlChoixCouples("")
 {
     // On crée un QSettings qui permettra d'initialiser les attributs avec les options sauvegardées
@@ -111,9 +112,9 @@ DialogueChoixDevises::~DialogueChoixDevises()
 
 
 
-/** Methode permettant d'enregistrer les choix de l'utilisateur et de
- * modifier l'affichage de la fenetre principale en fonction
- */
+/*  Methode permettant d'enregistrer les choix de l'utilisateur et de
+    modifier l'affichage de la fenetre principale en fonction
+*/
 void DialogueChoixDevises::enregistreValeurs()
 {
     // On crée un QSettings pour stocker les valeurs

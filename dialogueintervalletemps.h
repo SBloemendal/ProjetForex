@@ -1,9 +1,12 @@
 /**
  * \file dialogueintervalletemps.h
- * \author Simon
- * \version 1.0
- * \date 2015-04-27
  * \brief Classe pour afficher la fenetre d'affichage de données dans un intervalle de temps.
+ *
+ * Fenetre permettant d'afficher toutes les valeurs d'un couple sélectionnée dans un intervalle de
+ * temps donnée par l'utilisateur. Les données sont triées à l'affichage par date et par heure.
+ * L'utilisateur peut ensuite les trier différemment grâce aux header de la QTableView mais perd
+ * alors le tri double date et heure.
+ *
  */
 
 
@@ -29,7 +32,9 @@ public:
     ~DialogueIntervalleTemps();
 
 private slots:
-    /** Gere l'affichage des données en fonction du choix de l'utilisateur */
+    /** Génére la requete a la base de donnée en fonction des choix de l'utilisateur.
+     *  concernant le couple et les dates d'intervalle. Le QTableView se met alors a jour.
+     */
     void selectionChange();
 
 private:

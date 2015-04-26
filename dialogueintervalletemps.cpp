@@ -9,10 +9,10 @@
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
 
-/** Fenetre permettant d'afficher toutes les valeurs
- * d'un couple sélectionnée dans un intervalle de
- * temps donnée par l'utilisateur.
- */
+/*  Fenetre permettant d'afficher toutes les valeurs
+    d'un couple sélectionnée dans un intervalle de
+    temps donnée par l'utilisateur.
+*/
 DialogueIntervalleTemps::DialogueIntervalleTemps()
 {
     // Paramètres généraux
@@ -103,9 +103,10 @@ DialogueIntervalleTemps::~DialogueIntervalleTemps()
 
 
 
-/** Change la requete du modele en fonction des choix de l'utilisateur
- */
+//  Change la requete du modele en fonction des choix de l'utilisateur
 void DialogueIntervalleTemps::selectionChange()
 {
-    modeleIT->setQuery("SELECT * FROM COTATION WHERE nom='" + selection->currentText() + "' AND jour BETWEEN '" + dateDebut->date().toString("yyyy-MM-dd") + "' AND '" + dateFin->date().toString("yyyy-MM-dd") + "' ORDER BY jour DESC, heure DESC");
+    modeleIT->setQuery("SELECT * FROM COTATION WHERE nom='" + selection->currentText() +
+                       "' AND jour BETWEEN '" + dateDebut->date().toString("yyyy-MM-dd") +
+                       "' AND '" + dateFin->date().toString("yyyy-MM-dd") + "' ORDER BY jour DESC, heure DESC");
 }

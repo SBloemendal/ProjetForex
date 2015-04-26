@@ -1,9 +1,11 @@
 /**
  * \file dialoguetransactionautomatique.h
- * \author Simon
- * \version 1.0
- * \date 2015-04-27
  * \brief Classe pour afficher la fenetre de transactions automatiques
+ *
+ * Affiche une fenetre permettant de calculer automatiquement
+ * les profits possibles en temps reel. Se connecte a un web service
+ * du site FOREX et l'affiche dans une fenetre de dialogue.
+ *
  */
 
 

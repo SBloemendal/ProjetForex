@@ -6,15 +6,15 @@
 #include <QPushButton>
 #include <QFormLayout>
 
-/** Fenetre permettant de simuler une transaction
- * en choisissant le couple de devises voulu.
- */
+/*  Fenetre permettant de simuler une transaction
+    en choisissant le couple de devises voulu.
+*/
 DialogueSimulationTransactions::DialogueSimulationTransactions()
 {
     setWindowTitle("Simulation de transactions");
     setWindowIcon(QIcon(":/images/glyphicons-81-retweet.png"));
     setFixedHeight(150);
-    setFixedWidth(200);
+    setFixedWidth(250);
 
     // On crée le modele qui interrogera la base de donnée
     QSqlQueryModel* modeleCombo = new QSqlQueryModel;
@@ -61,8 +61,7 @@ DialogueSimulationTransactions::~DialogueSimulationTransactions()
 
 
 
-/** change la requete du modele en fonction des choix de l'utilisateur.
- */
+//  change la requete du modele en fonction des choix de l'utilisateur.
 void DialogueSimulationTransactions::selectionChange()
 {
     // On crée une requete prenant en compte le couple de devises selectionné dans le combobox 'selection'

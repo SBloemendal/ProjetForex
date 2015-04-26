@@ -1,3 +1,9 @@
+/**
+ * \file xmlstream.h
+ * \brief Fichier qui rassemble les deux fonctions permettant au QSettings de manipuler un fichier XML.
+ */
+
+
 #ifndef XMLSTREAM
 #define XMLSTREAM
 
@@ -11,30 +17,30 @@ static bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
   QXmlStreamReader xmlReader(&device);
   QStringList elements;
 
-  // Tant que la fin ne est pas atteint et aucune erreur ne se est produite
+  // Tant que la fin n'est pas atteinte et qu'aucune erreur ne s'est produite
   while (!xmlReader.atEnd() && !xmlReader.hasError()) {
-    // Lire le jeton suivant
+    // Lire l'élément suivant
     xmlReader.readNext();
 
-    // Quand l'objet est un StartElement
+    // Si l'élément est un StartElement mais pas "settings"
     if (xmlReader.isStartElement() && xmlReader.name() != "Settings") {
-      // Ajouter un article à la liste
+      // Ajoute l'element à la liste
       elements.append(xmlReader.name().toString());
-    // Quand l'objet est un EndElement
+    // Sinon si c'est un EndElement
     } else if (xmlReader.isEndElement()) {
-      // Pour supprimer le dernier élément
+      // et que la liste n'est pas vide, on supprime le dernier élément
       if(!elements.isEmpty()) elements.removeLast();
-    // Si jeton contient une valeur
+    // Si l'element contient une valeur
     } else if (xmlReader.isCharacters() && !xmlReader.isWhitespace()) {
       QString key;
 
-      // Ajouter des éléments à string
+      // On ajoute des éléments à 'key'
       for(int i = 0; i < elements.size(); i++) {
         if(i != 0) key += "/";
         key += elements.at(i);
       }
 
-      // Entrer la valeur map
+      // Puis on donne à QSettings la valeur pour ces elements
       map[key] = xmlReader.text().toString();
     }
   }
@@ -49,6 +55,7 @@ static bool readXmlFile(QIODevice &device, QSettings::SettingsMap &map) {
 }
 
 
+
 /** Permet a QSettings d'ecrire dans un fichier XML
  */
 static bool writeXmlFile(QIODevice &device, const QSettings::SettingsMap &map) {
@@ -61,23 +68,24 @@ static bool writeXmlFile(QIODevice &device, const QSettings::SettingsMap &map) {
   QStringList prev_elements;
   QSettings::SettingsMap::ConstIterator map_i;
 
-  // Grâce à tous les éléments de la carte
+  // On lit tous les éléments de la map
   for (map_i = map.begin(); map_i != map.end(); map_i++) {
 
     QStringList elements = map_i.key().split("/");
 
     int x = 0;
-    // Pour déterminer les éléments de fermeture
+    // Pour déterminer le nombre d'éléments de fermeture, compare les elements deja ouverts avec ceux a ouvrir
+    // Si on en a 2 identiques, on fermera le dernier.
     while(x < prev_elements.size() && elements.at(x) == prev_elements.at(x)) {
       x++;
     }
 
-    // Fermer Articles
+    // Fermer le dernier element ouvert
     for(int i = prev_elements.size() - 1; i >= x; i--) {
       xmlWriter.writeEndElement();
     }
 
-    // Ouvrir Tous les documents
+    // Ouvrir tous les elements dans 'elements'
     for (int i = x; i < elements.size(); i++) {
       xmlWriter.writeStartElement(elements.at(i));
     }
@@ -88,11 +96,13 @@ static bool writeXmlFile(QIODevice &device, const QSettings::SettingsMap &map) {
     prev_elements = elements;
   }
 
-  // Fermer éléments exceptionnels
+
+  // Une fois qu'il n'y a plus d'elements, fermer  les derniers éléments ouverts
   for(int i = 0; i < prev_elements.size(); i++) {
     xmlWriter.writeEndElement();
   }
 
+  // Puis on ferme l'elements 'settings' et on ferme le document
   xmlWriter.writeEndElement();
   xmlWriter.writeEndDocument();
 

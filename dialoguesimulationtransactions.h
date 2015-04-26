@@ -1,9 +1,9 @@
 /**
  * \file dialoguesimulationtransactions.h
- * \author Simon
- * \version 1.0
- * \date 2015-04-27
- * \brief Classe pour afficher la fenetre de simulation de transaction
+ * \brief Classe pour afficher la fenetre de simulation de transaction.
+ *
+ * Fenetre permettant de simuler une transaction en choisissant le couple de devises voulu.
+ * La simulation prend en compte les valeurs d'achat et de vente en temps reel.
  */
 
 
@@ -26,7 +26,9 @@ public:
     ~DialogueSimulationTransactions();
 
 private slots:
-    /** Gere l'affichage des données en fonction du choix de l'utilisateur */
+    /** Génére la requete a la base de donnée en fonction des choix de l'utilisateur.
+     *  concernant le couple. Le résultat est alors immédiatement affiché.
+     */
     void selectionChange();
 
 private:

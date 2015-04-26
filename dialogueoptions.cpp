@@ -1,5 +1,6 @@
 #include "dialogueoptions.h"
 #include "principal.h"
+#include "xmlstream.h"
 #include <QDir>
 #include <QBoxLayout>
 #include <QGroupBox>
@@ -10,8 +11,9 @@
 #include <QPushButton>
 #include <QComboBox>
 
-/** Affiche une fenetre proposant de modifier les options de l'application.
- */
+
+
+//  Affiche une fenetre proposant de modifier les options de l'application.
 DialogueOptions::DialogueOptions()
 {
     // On crée un QSettings qui permettra d'initialiser les attributs avec les options sauvegardées
@@ -145,9 +147,9 @@ DialogueOptions::~DialogueOptions()
 
 
 
-/** Permet de stocker les options choisies
- * par l'utilisateur dans le QSettings.
- */
+/*  Permet de stocker les options choisies
+    par l'utilisateur dans le QSettings.
+*/
 void DialogueOptions::enregistreValeurs()
 {
     // Création d'un QSettings

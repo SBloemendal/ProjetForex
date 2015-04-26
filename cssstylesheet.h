@@ -1,3 +1,8 @@
+/**
+ * \file cssstylesheet.h
+ * \brief Fichier qui contient toutes les règles CSS à appliquer à l'ensemble de l'application.
+ */
+
 #ifndef CSSSTYLESHEET
 #define CSSSTYLESHEET
 

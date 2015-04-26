@@ -1,8 +1,8 @@
 #include "coupledevise.h"
 #include <QtSql/QSqlQuery>
 
-/** On initialise tous les attributs à NULL à la création de l'objet.
- */
+
+
 CoupleDevise::CoupleDevise() : coupleDevise(""), valeurAchat(""), valeurVente(""), variation("")
 {
 
@@ -15,10 +15,10 @@ CoupleDevise::~CoupleDevise()
 }
 
 
-/** Insere les valeurs de tous les attributs dans la base de donnée créée dans la classe 'principal'.
- * La méthode vérifie si les valeurs 'achat' et 'vente' récupérées ont changé depuis le dernier enregistrement
- * de la base de donnée, et crée un nouvel enregistrement uniquement si il y a eu changement.
- */
+/*  Insere les valeurs de tous les attributs dans la base de donnée créée dans la classe 'principal'.
+    La méthode vérifie si les valeurs 'achat' et 'vente' récupérées ont changé depuis le dernier enregistrement
+    de la base de donnée, et crée un nouvel enregistrement uniquement si il y a eu changement.
+*/
 bool CoupleDevise::save(QSqlDatabase* db)
 {
     QSqlQuery query ;

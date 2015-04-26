@@ -1,4 +1,5 @@
 #include "principal.h"
+#include "xmlstream.h"
 #include "cssstylesheet.h"
 #include "coupledevise.h"
 #include "dialogchoixdevises.h"
@@ -22,19 +23,14 @@
 #include <QSortFilterProxyModel>
 
 
-/** Affiche une vue des valeurs les plus récentes des couples de devises sélectionnés,
- * et un graphique de l'évolution d'un couple de devises sélectionné.
- * A l'initialisation, crée une base de donnée SQLite, envoie une requète HTTP au site du Forex,
- * récupère les infos dans la réponse du Forex et les stocke dans la base de donnée pour les afficher
- * dans l'affichage principale.
- */
+
 Principal::Principal()
 {
     // On crée un QSettings
     QSettings::Format XmlFormat = QSettings::registerFormat("xml", readXmlFile, writeXmlFile);
     QSettings::setPath(XmlFormat, QSettings::UserScope,QDir::currentPath());
     QSettings settings(XmlFormat, QSettings::UserScope, "settings");
-    //settings.clear(); // Remet tous les paramètres à leur valeur par défaut
+    //settings.clear();         // Remet tous les paramètres à leur valeur par défaut
 
     // Initialisation des attributs avec le QSettings
     //
@@ -159,8 +155,7 @@ Principal::Principal()
 
 
 
-/** Création de la base de donnée
- */
+
 bool Principal::creerBdd()
 {
     db = QSqlDatabase::addDatabase( "QSQLITE") ;
@@ -185,12 +180,12 @@ bool Principal::creerBdd()
 
 
 
-/** Envoi de la requette HTTP par l'intermédiaire du QWebView.
- * La variable 'urlForex' contient l'adresse du site saisie par l'utilisateur,
- * définie dans 'DialogueOptions'.
- * La variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
- * définie dans 'DialogueOptions'.
- */
+/*  Envoi de la requette HTTP par l'intermédiaire du QWebView.
+    La variable 'urlForex' contient l'adresse du site saisie par l'utilisateur,
+    définie dans 'DialogueOptions'.
+    La variable 'urlChoixDevises' contient les couples de devises selectionnées dans les options,
+    définie dans 'DialogueOptions'.
+*/
 void Principal::connexionHttp()
 {
     QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
@@ -202,11 +197,11 @@ void Principal::connexionHttp()
 
 
 
-/** Fonction pour recuperer les données de la requete HTTP
- * Pour chaque couple de devises, on crée un objet 'CoupleDevise'
- * et on y stocke les valeurs récupéré du web service.
- * On accède aux valeurs par le biais des CSSselector grace à un QWebElement
- */
+/*  Fonction pour recuperer les données de la requete HTTP
+    Pour chaque couple de devises, on crée un objet 'CoupleDevise'
+    et on y stocke les valeurs récupéré du web service.
+    On accède aux valeurs par le biais des CSSselector grace à un QWebElement
+*/
 void Principal::recupereDonnees()
 {
     QWebElement element ;
@@ -238,9 +233,9 @@ void Principal::recupereDonnees()
 
 
 
-/** Rafraichit le QSqlQuery pour appliquer les parametres
- * contenue dans 'urlFiltreDevises' définie dans 'DialogueChoixDevises'.
- */
+/*  Rafraichit le QSqlQuery pour appliquer les parametres
+    contenue dans 'urlFiltreDevises' définie dans 'DialogueChoixDevises'.
+*/
 void Principal::rafraichitSQLQueryModel()
 {
     urlPourModele = "SELECT nom, achat, vente, variation, max(heure) AS 'Heure', jour FROM COTATION " + urlFiltreDevises + " GROUP BY nom" ;
@@ -249,10 +244,10 @@ void Principal::rafraichitSQLQueryModel()
 
 
 
-/** Permet d'afficher ou de masquer
- * le graphique de courbes
- * dans la fenêtre principale
- */
+/*  Permet d'afficher ou de masquer
+    le graphique de courbes
+    dans la fenêtre principale
+*/
 void Principal::afficheGraphique()
 {
     if (graph->isVisible())
@@ -271,12 +266,12 @@ void Principal::afficheGraphique()
 
 
 
-/** Selection du couple de devises a afficher
- * dans le graphique de la fenetre principale.
- * On récupère l'index de la ligne sélectionnée
- * dans le tableview par l'utilisateur pour
- * savoir quel couple afficher.
- */
+/*  Selection du couple de devises a afficher
+    dans le graphique de la fenetre principale.
+    On récupère l'index de la ligne sélectionnée
+    dans le tableview par l'utilisateur pour
+    savoir quel couple afficher.
+*/
 void Principal::requeteGraph(QModelIndex index)
 {
     int choix ;
@@ -311,8 +306,7 @@ void Principal::requeteGraph(QModelIndex index)
 
 
 
-/** Ouvre une fenetre 'Options systeme'
- */
+//  Ouvre une fenetre 'Options systeme'
 void Principal::options()
 {
     DialogueOptions* options = new DialogueOptions ;
@@ -323,8 +317,7 @@ void Principal::options()
 
 
 
-/** Ouvre la fenetre d'option 'Choix d'affichage des couples de devises'
- */
+// Ouvre la fenetre d'option 'Choix d'affichage des couples de devises'
 void Principal::choixCoupleDevises()
 {
     DialogueChoixDevises* choix = new DialogueChoixDevises;
@@ -337,8 +330,7 @@ void Principal::choixCoupleDevises()
 
 
 
-/** Ouvre une fenetre de dialogue 'simulation de transaction'
- */
+//  Ouvre une fenetre de dialogue 'simulation de transaction'
 void Principal::simulationTransaction()
 {
     DialogueSimulationTransactions* simulation = new DialogueSimulationTransactions;
@@ -347,8 +339,7 @@ void Principal::simulationTransaction()
 
 
 
-/** Ouvre une fenetre de dialogue 'Choix d'intervalle de temps'
- */
+//  Ouvre une fenetre de dialogue 'Choix d'intervalle de temps'
 void Principal::intervalleTemps()
 {
     DialogueIntervalleTemps* fenetreIntervalTemps = new DialogueIntervalleTemps ;
@@ -357,8 +348,7 @@ void Principal::intervalleTemps()
 
 
 
-/** Ouvre une fenetre 'Transaction automatique'
- */
+//  Ouvre une fenetre 'Transaction automatique'
 void Principal::transactionAuto()
 {
     DialogueTransactionAutomatique* transaction = new DialogueTransactionAutomatique ;

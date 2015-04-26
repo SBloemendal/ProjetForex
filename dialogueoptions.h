@@ -1,9 +1,13 @@
 /**
  * \file dialogueoptions.h
- * \author Simon
- * \version 1.0
- * \date 2015-04-27
- * \brief Classe pour afficher la fenetre d'options générales
+ * \brief Classe pour afficher la fenetre d'options générales.
+ *
+ * Affiche une fenetre proposant de modifier les options de l'application, et
+ * les stocke grace a un QSettings pour les rappeler lors de la prochaine
+ * execution de l'application. Les paramètres de la base de donnée sont stocké immédiatement
+ * mais les changements ne sont pris en compte qu'au redémarrage de l'application.
+ * Les paramètres de choix du stockage des couples de devises sont pris en compte immédiatement.
+ *
  */
 
 
@@ -26,10 +30,17 @@ public:
     ~DialogueOptions();
 
 signals:
+    /** Signal émis lorsque l'utilisateur clique sur le bouton 'Valider'.
+     *  Le signal est reçu par la fenetre principale qui met alors a jour
+     *  l'URL de requete HTTP en fonction des choix de l'utilisateur.
+     */
     QString dialogueFinis(QString);
 
 private slots:
-    /** Enregistre les valeurs choisies par l'utilisateur */
+    /** Lorsque l'utlisateur clique sur 'Valider', une nouvelle URL est généré reflétant les choix de l'utilisateur concernant
+     *  le stockage des couples de devises. Puis la valeur de chaque parametre est enregistré dans un fichier XML. Le signal
+     *  'dialoguefinis' est alors émis à l'attention de la classe 'Principal'.
+     */
     void enregistreValeurs();
 
 private:
