@@ -190,7 +190,8 @@ void Principal::connexionHttp()
 {
     QString url = urlForex + "/index.php?force_lang=5&pairs_ids=" ;
     url += urlChoixDevises;
-    url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
+    //url += "&header-text-color=%23FFFFFF&curr-name-color=%230059b0&inner-text-color=%23000000&green-text-color=%232A8215&green-background=%23B7F4C2&red-text-color=%23DC0001&red-background=%23FFE2E2&inner-border-color=%23CBCBCB&border-color=%23cbcbcb&bg1=%23F6F6F6&bg2=%23ffffff&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
+    url += "&bid=show&ask=show&last=hide&open=hide&high=hide&low=hide&change=hide&last_update=show" ;
     webView->load(QUrl(url));
     webView->close();
 }
@@ -227,7 +228,8 @@ void Principal::recupereDonnees()
         // Puis on demande a l'objet 'CoupleDevise' de se sauvegarder dans la bdd
         couple.save(&db) ;
     }
-    // On rafraichit le modele du TableView
+    // On rafraichit le modele du TableView pour que ce dernier affiche
+    // les dernieres valeurs récupérées.
     rafraichitSQLQueryModel();
 }
 
